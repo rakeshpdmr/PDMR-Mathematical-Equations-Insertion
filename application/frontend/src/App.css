@@ -1,0 +1,19 @@
+.App {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 5rem;
+  width: 50rem;
+  padding: 2rem;
+  background-color: #1b263b;
+  color: #1b263b;
+  font-size: 16px;
+}
+
+.main-app {
+}
+
+.App h2 {
+  color: #e0e1dd;
+}

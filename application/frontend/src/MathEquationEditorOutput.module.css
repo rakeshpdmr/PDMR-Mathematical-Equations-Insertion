@@ -1,0 +1,340 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  align-items: center;
+  padding: 1rem;
+  background-color: #e0e1dd;
+}
+
+.latex-equation {
+  font-size: 20px;
+  max-width: 30rem;
+  height: 8rem;
+  border: 1px solid #0d1b2a;
+  overflow-x: scroll;
+}
+
+.latex-equation::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #f5f5f5;
+}
+
+.latex-equation::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.latex-equation::-webkit-scrollbar:hover {
+  width: 2px;
+  height: 40px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.latex-equation::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #555;
+}
+
+.final-equation {
+  font-size: 30px;
+  max-width: 30rem;
+  height: 8rem;
+  border: 1px solid #0d1b2a;
+  padding: 1rem;
+  overflow-x: scroll;
+}
+
+.final-equation::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #f5f5f5;
+}
+
+.final-equation::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+  background-color: #f5f5f5;
+}
+
+.final-equation::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #555;
+}
+
+.header-container {
+}
+
+.panel-buttons-tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 0.8rem;
+  padding: 1rem;
+  border-bottom: 2px solid #0d1b2a;
+}
+
+.panel-buttons-tab {
+  font-size: 1.2rem;
+  background-color: #778da9;
+  border: 2px solid black;
+  border-radius: 0.5rem;
+  width: 7rem;
+  height: 6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.panel-buttons-tab-selected {
+  border: 2px solid green;
+}
+
+.panel-buttons-tab:hover {
+  border: 2px solid black;
+  cursor: pointer;
+}
+
+.panel-buttons-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  max-height: 6rem;
+  overflow-y: scroll;
+}
+
+.panel-buttons-container::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #f5f5f5;
+}
+
+.panel-buttons-container::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+  background-color: #f5f5f5;
+}
+
+.panel-buttons-container::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #555;
+}
+
+.panel-button {
+  font-size: 1.3rem;
+  min-width: 4rem;
+  padding: 0.4rem;
+  border: 1px solid black;
+  border-radius: 0.4rem;
+}
+
+.panel-button:hover {
+  cursor: pointer;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-area-main {
+  min-width: 10rem;
+  min-height: 7rem;
+  max-height: 200px;
+  overflow-x: scroll;
+  max-width: 30rem;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px black dotted;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: left;
+}
+
+.edit-area-main::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #f5f5f5;
+}
+
+.edit-area-main::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+  background-color: #f5f5f5;
+}
+
+.edit-area-main::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #555;
+}
+
+.edit-area {
+  /* min-width: 40px;
+  min-height: 20px; */
+  min-width: 20px;
+  min-height: 20px;
+  padding: 2px;
+  margin: 1px;
+  /* border: 1px black dotted; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-area-empty {
+  /* min-width: 40px;
+  min-height: 20px; */
+  min-width: 20px;
+  min-height: 20px;
+  padding: 2px;
+  margin: 1px;
+  border: 1px black dotted;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-area:hover,
+.edit-area-main:hover {
+  cursor: text;
+}
+
+.selected-edit-area {
+  border: 1.5px red dotted;
+}
+
+.square-root-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-area {
+}
+
+.superscript-container {
+  position: relative;
+
+  top: -10px;
+  /* left: -10px; */
+  /* display: flex;
+  align-items: start;
+  height: 50%; */
+}
+
+.subscript-container {
+  position: relative;
+  top: 10px;
+  /* left: -10px; */
+  /* display: flex;
+  align-items: start;
+  height: 50%; */
+}
+
+.subscript-container .edit-area {
+  min-width: 10px;
+  min-height: 10px;
+}
+
+.subscript-container .edit-area-empty {
+  min-width: 10px;
+  min-height: 10px;
+}
+
+.superscript-container .edit-area {
+  min-width: 10px;
+  min-height: 10px;
+}
+
+.superscript-container .edit-area-empty {
+  min-width: 10px;
+  min-height: 10px;
+}
+
+/* .superscript-container .edit-area {
+  background-color: aqua;
+} */
+
+/* .square-root-container .edit-area {
+  border-top: 1px solid;
+} */
+
+/* .cursor { */
+/* border-right: 1px solid #555; */
+/* background-color: #778da9; */
+/* }  */
+
+@keyframes blink {
+  0% {
+    border-color: #ccc; /* Start color */
+  }
+  50% {
+    border-color: #000; /* Intermediate color */
+  }
+  100% {
+    border-color: #ccc; /* End color */
+  }
+}
+
+.cursor {
+  border-right: 1px solid #ccc; /* Initial border style */
+  animation: blink 1s infinite; /* Apply animation */
+}
+
+.cursor-1 {
+  border-left: 1px solid #ccc; /* Initial border style */
+  animation: blink 1s infinite; /* Apply animation */
+}
+
+/* modal css */
+
+.details-modal {
+  position: absolute;
+  top: 35%;
+  left: 20%;
+  width: 30rem;
+  height: 15rem;
+  background-color: #f5f5f5;
+  border-radius: 1rem;
+  color: #0d1b2a;
+}
+
+.modal-header h2 {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  font-size: 2.3rem;
+  font-weight: 400;
+  color: #0d1b2a;
+}
+
+.modal-symbol {
+  margin-top: -1rem;
+  font-size: 4rem;
+}
+
+.modal-name {
+}
+
+.modal-latex {
+}
+
+.value-header {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
