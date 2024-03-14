@@ -1,6 +1,5 @@
 import "./App.css";
-import EquationEditor from "./MathEquationEditor";
-import MathEquationEditorOutput from "./MathEquationEditorOutput";
+import MathEquationEditorOutput from "./Components/MathematicalEditorOutput/MathEquationEditorOutput";
 
 function App() {
   return (
@@ -8,7 +7,6 @@ function App() {
       <div className="main-app">
         <h2>PDMR Math Equations Insertion.</h2>
         <MathEquationEditorOutput />
-        {/* <EquationEditor /> */}
       </div>
     </div>
   );
