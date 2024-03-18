@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, Component } from "react";
 import classes from "./MathEquationEditorOutput.module.css";
-import HoverDetailsModal from "../HoverDetailsModal/HoverDetailsModal";
-import SearchModal from "../SearchModal/SearchModal";
+import HoverDetailsModal from "../UI/Modal/HoverDetailsModal/HoverDetailsModal";
+import MatrixInputModal from "../UI/Modal/MatrixInputModal/MatrixInputModal";
+import SearchModal from "../UI/Modal/SearchModal/SearchModal";
 import searchIcon from "../../Assets/search.png";
 import katex from "katex";
 import canvg from "canvg";
@@ -12,6 +13,7 @@ export const MathEquationEditorOutput = () => {
   // modal
   const [hoverDetailsModal, setHoverDetailsModal] = useState(false);
   const [searchModal, setSearchModal] = useState(false);
+  const [matrixInputModal, setMatrixInputModal] = useState(false);
 
   const [hoverButtonInfo, setHoverButtonInfo] = useState({});
 
@@ -181,7 +183,7 @@ export const MathEquationEditorOutput = () => {
         event.preventDefault();
         alert("ctrl + s");
       }
-      if (!event.ctrlKey && !searchModal) {
+      if (!event.ctrlKey && !searchModal && !matrixInputModal) {
         handleKeyDownOutside(
           event,
           selectedEditArea,
@@ -494,16 +496,31 @@ export const MathEquationEditorOutput = () => {
   }
 
   // panel button inserting
-  const panelButtonClicked = (buttonInfo) => {
+  const panelButtonClicked = (buttonInfo, rowsCount, columnsCount) => {
     console.log("buttonInfo panelButtonClicked", buttonInfo);
-    if (buttonInfo.name === "Matrix") {
-      let row = prompt("Number of rows");
-      let column = prompt("Number of column");
-      buttonInfo.row = row;
-      buttonInfo.column = column;
-      buttonInfo.value = [...Array(row * column)].map((value) => []);
-
-      console.log(" buttonInfo.name ");
+    if (selectedEditArea === "") {
+      return;
+    }
+    if (
+      buttonInfo.name === "Matrix" &&
+      rowsCount === undefined &&
+      columnsCount === undefined
+    ) {
+      setMatrixInputModal(true);
+      return;
+    } else if (buttonInfo.name === "Matrix" && rowsCount && columnsCount) {
+      console.log(
+        " inside panel button clicked  matrix ",
+        buttonInfo,
+        rowsCount,
+        columnsCount
+      );
+      let rows = typeof rowsCount === "string" ? Number(rowsCount) : rowsCount;
+      let columns =
+        typeof columnsCount === "string" ? Number(columnsCount) : columnsCount;
+      buttonInfo.row = rows;
+      buttonInfo.column = columns;
+      buttonInfo.value = [...Array(rows * columns)].map((value) => []);
     }
 
     let splittedIndexes = selectedEditArea.split(",");
@@ -512,6 +529,7 @@ export const MathEquationEditorOutput = () => {
     const targetArray = getValueAtIndex(copy, splittedIndexes);
     console.log(
       " inside updateValueAtIndex target array 101",
+      buttonInfo,
       splittedIndexes,
       targetArray,
       lastIdx
@@ -558,42 +576,42 @@ export const MathEquationEditorOutput = () => {
           console.log("error was ", error);
         }
       } else {
-        // setEquation((prev) => [...prev, { ...buttonInfo, value: [] }]);
-        setEquation((prev) => {
-          console.log("3101");
-          // return prev;
-          let finalValue = [...prev];
-          // finalValue.splice(cursorIndex + 1, 0, { ...buttonInfo, value: [] });
-
-          if (targetArray.name === "Matrix") {
+        if (targetArray.name === "Matrix") {
+          try {
             targetArray.value[lastIdx]?.splice(cursorIndex + 1, 0, {
               ...buttonInfo,
               // value: [],
             });
-            console.log(
-              " inside updateValueAtIndex target array 101 after 3111 ",
-              splittedIndexes,
-              targetArray.value[lastIdx],
-              "ss",
-              lastIdx,
-              targetArray,
-              finalValue
-            );
-          } else {
+
+            console.log("copy before setting", copy);
+            setEquation(copy);
+            // plus
+            setCursorIndex((prev) => prev + 1);
+          } catch (error) {
+            console.log("error was ", error);
+          }
+        } else {
+          // setEquation((prev) => [...prev, { ...buttonInfo, value: [] }]);
+          setEquation((prev) => {
+            console.log("3101");
+            // return prev;
+            let finalValue = [...prev];
+            // finalValue.splice(cursorIndex + 1, 0, { ...buttonInfo, value: [] });
+
             finalValue.splice(cursorIndex + 1, 0, {
               ...buttonInfo,
               // value: [],
             });
-          }
 
-          // console.log("equation uf 934", finalValue, ...buttonInfo);
+            // console.log("equation uf 934", finalValue, ...buttonInfo);
 
-          return finalValue;
-        });
+            return finalValue;
+          });
 
-        // plus
-        setCursorIndex((prev) => prev + 1);
-        console.log("copy before setting", copy);
+          // plus
+          setCursorIndex((prev) => prev + 1);
+          console.log("copy before setting", copy);
+        }
       }
     }
   };
@@ -1065,42 +1083,14 @@ export const MathEquationEditorOutput = () => {
               : ""
           }`}
         >
-          {/* {buttonInfo?.value.map((value, index) => (
-              <div>
-                {console.log("matrix value", value, buttonInfo)}
-
-                {typeof value === "string" ? (
-                  value === " " ? (
-                    <span>&nbsp;</span>
-                  ) : (
-                    <p
-                      className={
-                        selectedEditArea === `${nest},v` &&
-                        cursorIndex === index
-                          ? classes["cursor"]
-                          : selectedEditArea === `${nest},v` &&
-                            cursorIndex === -1 &&
-                            index === 0
-                          ? classes["cursor-1"]
-                          : ""
-                      }
-                    >
-                      {value}
-                    </p>
-                  )
-                ) : (
-                  <div>{renderComponent(value, `${nest},v,${index}`)}</div>
-                )}
-              </div>
-            ))} */}
-          {console.log("buttonInfo 3646 ", buttonInfo.row, buttonInfo.column)}
-
-          {[...Array(Number(buttonInfo.row))].map((_, rowIndex) => (
+          {[...Array(buttonInfo.row)].map((_, rowIndex) => (
             <div className={classes["matrix-row"]}>
-              {[...Array(Number(buttonInfo.column))].map((_, columnIndex) => (
+              {[...Array(buttonInfo.column)].map((_, columnIndex) => (
                 <div
                   className={`${classes["matrix-column"]} ${
-                    buttonInfo?.value?.length > 0
+                    buttonInfo?.value[
+                      buttonInfo.column * rowIndex + columnIndex
+                    ]?.length > 0
                       ? classes["edit-area"]
                       : classes["edit-area-empty"]
                   }  ${
@@ -1281,6 +1271,22 @@ export const MathEquationEditorOutput = () => {
     setSearchModal(false);
   };
 
+  const matrixInputModalCloseHandler = () => {
+    setMatrixInputModal(false);
+  };
+
+  const matrixInputsSubmitHandler = (e, rowsCount, columnsCount) => {
+    e.preventDefault();
+    console.log(
+      "inside matrixInputsSubmitHandler ",
+      buttonInfos.mathConstructs[5],
+      rowsCount,
+      columnsCount
+    );
+    panelButtonClicked(buttonInfos.mathConstructs[5], rowsCount, columnsCount);
+    setMatrixInputModal(false);
+  };
+
   const svgRef = React.useRef(null);
 
   const renderSVG = () => {
@@ -1442,6 +1448,13 @@ export const MathEquationEditorOutput = () => {
           panelButtonClicked={panelButtonClicked}
           selectedEditArea={selectedEditArea}
           cursorIndex={cursorIndex}
+        />
+      )}
+
+      {matrixInputModal && (
+        <MatrixInputModal
+          closeSearchModal={matrixInputModalCloseHandler}
+          matrixSubmitHandler={matrixInputsSubmitHandler}
         />
       )}
     </div>

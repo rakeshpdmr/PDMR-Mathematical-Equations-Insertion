@@ -40,9 +40,9 @@
       "name": "Matrix",
       "label": "Matrix",
       "row": 2,
-      "column": 3,
-      "latexFormat": "\\begin{pmatrix} 1 & 0 & 0 & 4 & 2_{s}^2 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ end{pmatrix}",
-      "value": [[], [], [], [], [], []],
+      "column": 2,
+      "latexFormat": "\\begin{pmatrix}  &  \\  &  \\ end{pmatrix}",
+      "value": [],
       "type": "complex"
     }
   ],

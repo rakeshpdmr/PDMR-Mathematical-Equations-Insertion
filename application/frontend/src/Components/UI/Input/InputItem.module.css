@@ -1,0 +1,211 @@
+.form-controls {
+  position: relative;
+  min-height: 4.2rem;
+  line-height: 4.2rem;
+}
+
+.form-controls input,
+.form-controls select,
+.form-controls textarea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 4.2rem;
+  outline: none;
+  border-radius: 0.5rem;
+  border: 1.5px solid #ccc;
+  background: transparent;
+  color: #111;
+  padding: 0 1.5rem;
+  line-height: 1.5;
+  /* font-size: 1.5rem; */
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  z-index: 1;
+  transition: all 0.1s ease;
+}
+
+.form-controls textarea {
+  padding: 1rem 1.3rem;
+  /* height: 189px; */
+}
+
+.form-controls label {
+  position: absolute;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: #202124;
+  padding: 0 1rem;
+  letter-spacing: 0.5px;
+  margin: 0 1rem;
+  background-color: #fff;
+  transition: all 0.2s ease;
+}
+
+.form-controls input:focus,
+.form-controls input:valid,
+.form-controls select:focus,
+.form-controls select:valid,
+.form-controls textarea:focus,
+.form-controls textarea:valid {
+  border-color: #228be6;
+  color: #333;
+}
+
+.search-input-single:focus {
+  border: 1px solid #ccc;
+}
+
+.search-input-single {
+  width: 100%;
+  border: 1px solid #ddd;
+  outline: none;
+  padding: 0.8rem 0.8rem !important;
+  letter-spacing: 1.75px;
+  border-radius: 0.4rem;
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: #343a40;
+}
+
+.form-controls input:focus + label,
+.form-controls input:valid + label,
+.form-controls select:focus + label,
+.form-controls select:valid + label,
+.form-controls textarea:focus + label,
+.form-controls textarea:valid + label {
+  color: #228be6;
+  height: 0.5rem;
+  line-height: 0.5rem;
+  padding: 0 0.5rem;
+  margin: 0 1.75rem;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  font-size: 1.125rem;
+  z-index: 1;
+  transform: translate(-16.6rem, -0.2rem);
+}
+.single-search-container {
+  position: relative;
+  padding: 1rem !important;
+}
+
+@keyframes animate {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: 25rem;
+  }
+}
+
+/* SELECT INPUT */
+
+.select-form-controls input {
+  cursor: pointer;
+}
+
+.select-dropdown-icon {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.options-container {
+  position: absolute;
+  top: 4.5rem;
+  width: 100%;
+  border-radius: 0.7rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  padding: 1rem 0;
+  z-index: 2;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+
+  /* position: absolute;
+  top: 4.5rem;
+  width: 100%;
+  border-radius: 0.7rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  padding: 1rem 0;
+  z-index: 2;
+  background-color: #fff; */
+}
+
+.options-lists {
+  margin-top: 4rem;
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  max-height: 10.5rem;
+  overflow-y: scroll;
+  background-color: #fff;
+  /* For Firefox */
+  scrollbar-color: #cac9c9;
+  scrollbar-width: 1rem;
+}
+/* For Chrome, Safari - Scrolling Due to too many overlayed elements present so chance to prevents scrolling */
+.options-lists::-webkit-scrollbar {
+  width: 1rem;
+}
+
+.options-lists::-webkit-scrollbar-thumb {
+  background-color: #cac9c9;
+}
+.options-lists::-webkit-scrollbar-thumb:active,
+.options-lists::-webkit-scrollbar-thumb:hover {
+  background-color: #909090;
+}
+.options-lists .list-items {
+  display: grid;
+  grid-template-columns: 1fr 20fr;
+  gap: 2rem;
+}
+
+.options-lists .dropdownList:hover {
+  background-color: #e7f5ff;
+}
+
+.options-lists li:hover {
+  background-color: #e7f5ff;
+  cursor: pointer;
+}
+
+.options-lists .dropdownList p {
+  padding: 0.4rem 2rem;
+  font-weight: 400;
+  font-size: 1.4rem;
+  letter-spacing: 0.75px;
+  margin: -1rem 0;
+}
+
+.options-lists .list-items .text-items {
+  font-weight: 400;
+  font-size: 1.4rem;
+  letter-spacing: 0.75px;
+}
+
+.options-lists .dropdownList input {
+  height: 20%;
+  width: 5%;
+}
+
+.options-lists .list-items .checkbox-selection {
+  position: relative;
+  margin-left: 1rem;
+  width: 1.6rem;
+}
+
+.select-dropdown-icon-rotated {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(180deg);
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}

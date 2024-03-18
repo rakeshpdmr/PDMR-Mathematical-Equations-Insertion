@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import classes from "./SearchModal.module.css";
-import add from "../../Assets/add.png";
-import close from "../../Assets/close.png";
-import buttonInfos from "../Infos/buttonInfos.json";
+import add from "../../../../Assets/add.png";
+import close from "../../../../Assets/close.png";
+import buttonInfos from "../../../Infos/buttonInfos.json";
 
 const SearchModal = (props) => {
   const all = buttonInfos.all;

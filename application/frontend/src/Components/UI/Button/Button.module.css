@@ -1,0 +1,29 @@
+.btn {
+  padding: 0.8rem 2.4rem;
+  border-radius: 0.6rem;
+  border: none;
+  background-color: rgba(134, 142, 150, 0.3);
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.main-content-navigate-btn {
+  background-color: #e9ecef;
+  border: 1px solid #e9ecef;
+  text-transform: capitalize;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  padding: 0.8rem 1.8rem;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s;
+  border-radius: 0.6rem;
+}
+
+.main-content-navigate-btn:hover,
+.main-content-navigate-btn:active {
+  background: linear-gradient(135deg, #7855c7 0%, #599ebe 100%);
+  color: #fff;
+}

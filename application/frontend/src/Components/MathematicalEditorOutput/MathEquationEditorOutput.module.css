@@ -286,9 +286,10 @@
 }
 
 .matrix-container {
-  /* display: flex;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: center; */
+  align-items: center;
   border-left: 2px solid black;
   border-right: 2px solid black;
 }
