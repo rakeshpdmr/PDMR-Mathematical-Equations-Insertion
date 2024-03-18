@@ -8,9 +8,22 @@
   background-color: #e0e1dd;
 }
 
+.search-container {
+  position: absolute;
+  right: 0.5rem;
+  background-color: #f5f5f5;
+  border-radius: 0.4rem;
+  padding: 0.2rem;
+  border: 2px solid #0d1b2a;
+}
+
+.search-container:hover {
+  cursor: pointer;
+}
+
 .latex-equation {
   font-size: 20px;
-  max-width: 30rem;
+  max-width: 40rem;
   height: 8rem;
   border: 1px solid #0d1b2a;
   overflow-x: scroll;
@@ -44,11 +57,15 @@
 
 .final-equation {
   font-size: 30px;
-  max-width: 30rem;
-  height: 8rem;
+  max-width: 40rem;
+  height: 10rem;
   border: 1px solid #0d1b2a;
-  padding: 1rem;
+  padding: 2rem;
   overflow-x: scroll;
+}
+
+.final-equation > * {
+  font-size: 40px;
 }
 
 .final-equation::-webkit-scrollbar-track {
@@ -78,6 +95,8 @@
   align-items: center;
   gap: 5px;
   margin-bottom: 0.8rem;
+  margin-right: 1rem;
+  margin-top: 1rem;
   padding: 1rem;
   border-bottom: 2px solid #0d1b2a;
 }
@@ -266,6 +285,29 @@
   min-height: 10px;
 }
 
+.matrix-container {
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  border-left: 2px solid black;
+  border-right: 2px solid black;
+}
+
+.matrix-row {
+  display: flex;
+  flex-direction: row;
+  /* gap: 1rem;
+  justify-content: center;
+  align-items: center; */
+}
+
+.matrix-column {
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  /* background-color: red; */
+  /* gap: 1rem; */
+}
 /* .superscript-container .edit-area {
   background-color: aqua;
 } */

@@ -2,11 +2,16 @@ import React, { useState, useRef, useEffect, Component } from "react";
 import classes from "./MathEquationEditorOutput.module.css";
 import HoverDetailsModal from "../HoverDetailsModal/HoverDetailsModal";
 import SearchModal from "../SearchModal/SearchModal";
+import searchIcon from "../../Assets/search.png";
 import katex from "katex";
+import canvg from "canvg";
+import wmfjs from "wmf-js";
 
 export const MathEquationEditorOutput = () => {
   // modal
-  const [hoverDetails, setHoverDetails] = useState(false);
+  const [hoverDetailsModal, setHoverDetailsModal] = useState(false);
+  const [searchModal, setSearchModal] = useState(false);
+
   const [hoverButtonInfo, setHoverButtonInfo] = useState({});
 
   const tabs = [
@@ -33,2569 +38,6 @@ export const MathEquationEditorOutput = () => {
     {
       name: "arrowSymbols",
       label: "Arrow Symbols",
-    },
-  ];
-
-  const all = [
-    {
-      name: "Fraction",
-      label: "Fraction",
-      latexFormat: "\\frac{}{}",
-      value1: [],
-      value2: [],
-      type: "complex",
-    },
-    {
-      name: "Square Root",
-      label: "Square Root",
-      latexFormat: "\\sqrt{}",
-      value: [],
-      type: "complex",
-    },
-    {
-      name: "Superscript",
-      label: "Superscript",
-      latexFormat: "^{}",
-      value: [],
-      type: "complex",
-    },
-    {
-      name: "Subscript",
-      label: "Subscript",
-      latexFormat: "_{}",
-      value: [],
-      type: "complex",
-    },
-    {
-      name: "Integral",
-      label: "Integral",
-      latexFormat: "\\int{}",
-      value: [],
-      type: "complex",
-    },
-
-    {
-      name: "ω",
-      label: "omega",
-      latexFormat: "\\omega",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "α",
-      label: "alpha",
-      latexFormat: "\\alpha",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "β",
-      label: "beta",
-      latexFormat: "\\beta",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "χ",
-      label: "chi",
-      latexFormat: "\\chi",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "δ",
-      label: "delta",
-      latexFormat: "\\delta",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "η",
-      label: "eta",
-      latexFormat: "\\eta",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "γ",
-      label: "gamma",
-      latexFormat: "\\gamma",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "ι",
-      label: "iota",
-      latexFormat: "\\iota",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "κ",
-      label: "kappa",
-      latexFormat: "\\kappa",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "λ",
-      label: "lambda",
-      latexFormat: "\\lambda",
-      value: [],
-      type: "simple",
-    },
-    { name: "µ", label: "mu", latexFormat: "\\mu", value: [], type: "simple" },
-    { name: "ν", label: "nu", latexFormat: "\\nu", value: [], type: "simple" },
-    { name: "o", label: "o", latexFormat: "o", value: [], type: "simple" },
-    {
-      name: "φ",
-      label: "phi",
-      latexFormat: "\\phi",
-      value: [],
-      type: "simple",
-    },
-    { name: "π", label: "pi", latexFormat: "\\pi", value: [], type: "simple" },
-    {
-      name: "ψ",
-      label: "psi",
-      latexFormat: "\\psi",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "ρ",
-      label: "rho",
-      latexFormat: "\\rho",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "σ",
-      label: "sigma",
-      latexFormat: "\\sigma",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "τ",
-      label: "tau",
-      latexFormat: "\\tau",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "θ",
-      label: "theta",
-      latexFormat: "\\theta",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "υ",
-      label: "upsilon",
-      latexFormat: "\\upsilon",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "φ",
-      label: "varphi",
-      latexFormat: "\\varphi",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "Ω",
-      label: "Omega",
-      latexFormat: "\\Omega",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "ε",
-      label: "epsilon",
-      latexFormat: "\\epsilon",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "ϑ",
-      label: "vartheta",
-      latexFormat: "\\vartheta",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "ϴ",
-      label: "vartheta",
-      latexFormat: "\\vartheta",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "ϖ",
-      label: "varpi",
-      latexFormat: "\\varpi",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "Φ",
-      label: "Phi",
-      latexFormat: "\\Phi",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "ℵ",
-      label: "aleph",
-      latexFormat: "\\aleph",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "ϱ",
-      label: "varrho",
-      latexFormat: "\\varrho",
-      value: [],
-      type: "simple",
-    },
-    { name: "Π", label: "Pi", latexFormat: "\\Pi", value: [], type: "simple" },
-    {
-      name: "i",
-      label: "beth",
-      latexFormat: "\\beth",
-      value: [],
-      type: "simple",
-    },
-    { name: "ξ", label: "xi", latexFormat: "\\xi", value: [], type: "simple" },
-    {
-      name: "ς",
-      label: "varsigma",
-      latexFormat: "\\varsigma",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "Ψ",
-      label: "Psi",
-      latexFormat: "\\Psi",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "k",
-      label: "daleth",
-      latexFormat: "\\daleth",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "ζ",
-      label: "zeta",
-      latexFormat: "\\zeta",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "Σ",
-      label: "Sigma",
-      latexFormat: "\\Sigma",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "ג",
-      label: "gimel",
-      latexFormat: "\\gimel",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇑",
-      label: "Uparrow",
-      latexFormat: "\\Uparrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇓",
-      label: "Downarrow",
-      latexFormat: "\\Downarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↑",
-      label: "uparrow",
-      latexFormat: "\\uparrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⌜",
-      label: "ulcorner",
-      latexFormat: "\\ulcorner",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⌞",
-      label: "llcorner",
-      latexFormat: "\\llcorner",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⌝",
-      label: "urcorner",
-      latexFormat: "\\urcorner",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⌟",
-      label: "lrcorner",
-      latexFormat: "\\lrcorner",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⟨",
-      label: "langle",
-      latexFormat: "\\langle",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⟩",
-      label: "rangle",
-      latexFormat: "\\rangle",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⌈",
-      label: "lceil",
-      latexFormat: "\\lceil",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⌉",
-      label: "rceil",
-      latexFormat: "\\rceil",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⌊",
-      label: "lfloor",
-      latexFormat: "\\lfloor",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⌋",
-      label: "rfloor",
-      latexFormat: "\\rfloor",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "[",
-      label: "left square bracket",
-      latexFormat: "[",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "]",
-      label: "right square bracket",
-      latexFormat: "]",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "|",
-      label: "vertical bar",
-      latexFormat: "|",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∣",
-      label: "divides",
-      latexFormat: "\\vert",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "|",
-      label: "vertical bar",
-      latexFormat: "\\|",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∥",
-      label: "parallel",
-      latexFormat: "\\Vert",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "{",
-      label: "left curly brace",
-      latexFormat: "\\{",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "}",
-      label: "right curly brace",
-      latexFormat: "\\}",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "\\",
-      label: "backslash",
-      latexFormat: "\\\\",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "/",
-      label: "forward slash",
-      latexFormat: "/",
-      value: [],
-      type: "simple",
-    },
-    { name: "b", label: "b", latexFormat: "b", value: [], type: "simple" },
-    { name: "c", label: "c", latexFormat: "c", value: [], type: "simple" },
-    { name: "d", label: "d", latexFormat: "d", value: [], type: "simple" },
-    { name: "e", label: "e", latexFormat: "e", value: [], type: "simple" },
-    { name: "h", label: "h", latexFormat: "h", value: [], type: "simple" },
-    { name: "i", label: "i", latexFormat: "i", value: [], type: "simple" },
-    { name: "k", label: "k", latexFormat: "k", value: [], type: "simple" },
-    { name: "p", label: "p", latexFormat: "p", value: [], type: "simple" },
-    { name: "q", label: "q", latexFormat: "q", value: [], type: "simple" },
-    { name: "x", label: "x", latexFormat: "x", value: [], type: "simple" },
-    { name: "y", label: "y", latexFormat: "y", value: [], type: "simple" },
-    {
-      name: "arccos",
-      label: "arccosine",
-      latexFormat: "\\arccos",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "arcsin",
-      label: "arcsine",
-      latexFormat: "\\arcsin",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "arctan",
-      label: "arctangent",
-      latexFormat: "\\arctan",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "arg",
-      label: "argument",
-      latexFormat: "\\arg",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "cos",
-      label: "cosine",
-      latexFormat: "\\cos",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "cosh",
-      label: "hyperbolic cosine",
-      latexFormat: "\\cosh",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "cot",
-      label: "cotangent",
-      latexFormat: "\\cot",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "coth",
-      label: "hyperbolic cotangent",
-      latexFormat: "\\coth",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "csc",
-      label: "cosecant",
-      latexFormat: "\\csc",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "deg",
-      label: "degree",
-      latexFormat: "\\deg",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "det",
-      label: "determinant",
-      latexFormat: "\\det",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "dim",
-      label: "dimension",
-      latexFormat: "\\dim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "exp",
-      label: "exponential",
-      latexFormat: "\\exp",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "gcd",
-      label: "greatest common divisor",
-      latexFormat: "\\gcd",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "hom",
-      label: "homomorphism",
-      latexFormat: "\\hom",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "inf",
-      label: "infimum",
-      latexFormat: "\\inf",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∞",
-      label: "infinity",
-      latexFormat: "\\infty",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "ker",
-      label: "kernel",
-      latexFormat: "\\ker",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "lg",
-      label: "logarithm base 2",
-      latexFormat: "\\lg",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "lim",
-      label: "limit",
-      latexFormat: "\\lim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "liminf",
-      label: "limit inferior",
-      latexFormat: "\\liminf",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "limsup",
-      label: "limit superior",
-      latexFormat: "\\limsup",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "ln",
-      label: "natural logarithm",
-      latexFormat: "\\ln",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "log",
-      label: "logarithm",
-      latexFormat: "\\log",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "max",
-      label: "maximum",
-      latexFormat: "\\max",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "min",
-      label: "minimum",
-      latexFormat: "\\min",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "Pr",
-      label: "probability",
-      latexFormat: "\\Pr",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "sec",
-      label: "secant",
-      latexFormat: "\\sec",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "sin",
-      label: "sine",
-      latexFormat: "\\sin",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "sinh",
-      label: "hyperbolic sine",
-      latexFormat: "\\sinh",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "sup",
-      label: "supremum",
-      latexFormat: "\\sup",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "tan",
-      label: "tangent",
-      latexFormat: "\\tan",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "tanh",
-      label: "hyperbolic tangent",
-      latexFormat: "\\tanh",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "*",
-      label: "Asterisk",
-      latexFormat: "\\ast",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "±",
-      label: "Plus-Minus",
-      latexFormat: "\\pm",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∩",
-      label: "Intersection",
-      latexFormat: "\\cap",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊲",
-      label: "Normal Subgroup",
-      latexFormat: "\\lhd",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋆",
-      label: "Star",
-      latexFormat: "\\star",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∓",
-      label: "Minus-Plus",
-      latexFormat: "\\mp",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∪",
-      label: "Union",
-      latexFormat: "\\cup",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊳",
-      label: "Normal Subgroup",
-      latexFormat: "\\rhd",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋅",
-      label: "Dot",
-      latexFormat: "\\cdot",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⨿",
-      label: "Amalgamation",
-      latexFormat: "\\amalg",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊎",
-      label: "Multiset Union",
-      latexFormat: "\\uplus",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "◃",
-      label: "Left Triangle",
-      latexFormat: "\\triangleleft",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∘",
-      label: "Composition",
-      latexFormat: "\\circ",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊙",
-      label: "Circle Dot",
-      latexFormat: "\\odot",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊓",
-      label: "Square Intersection",
-      latexFormat: "\\sqcap",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "▹",
-      label: "Right Triangle",
-      latexFormat: "\\triangleright",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∙",
-      label: "Bullet",
-      latexFormat: "\\bullet",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊕",
-      label: "Circle Plus",
-      latexFormat: "\\oplus",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∧",
-      label: "Wedge",
-      latexFormat: "\\wedge",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊵",
-      label: "Normal Subgroup",
-      latexFormat: "\\unrhd",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋄",
-      label: "Diamond",
-      latexFormat: "\\diamond",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊘",
-      label: "Circle Slash",
-      latexFormat: "\\oslash",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∨",
-      label: "Vee",
-      latexFormat: "\\vee",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "▽",
-      label: "Big Down Triangle",
-      latexFormat: "\\bigtriangledown",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "×",
-      label: "Times",
-      latexFormat: "\\times",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊗",
-      label: "Circle Times",
-      latexFormat: "\\otimes",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "†",
-      label: "Dagger",
-      latexFormat: "\\dagger",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "△",
-      label: "Big Up Triangle",
-      latexFormat: "\\bigtriangleup",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "÷",
-      label: "Division",
-      latexFormat: "\\div",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≀",
-      label: "Wreath Product",
-      latexFormat: "\\wr",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "‡",
-      label: "Double Dagger",
-      latexFormat: "\\ddagger",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: " \\",
-      label: "Set Minus",
-      latexFormat: "\\setminus",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋅",
-      label: "Center Dot",
-      latexFormat: "\\centerdot",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊼",
-      label: "Bar Wedge",
-      latexFormat: "\\barwedge",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊻",
-      label: "XOR",
-      latexFormat: "\\veebar",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊛",
-      label: "Circled Asterisk",
-      latexFormat: "\\circledast",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊞",
-      label: "Box Plus",
-      latexFormat: "\\boxplus",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋏",
-      label: "Curly Wedge",
-      latexFormat: "\\curlywedge",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋎",
-      label: "Curly Vee",
-      latexFormat: "\\curlyvee",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊚",
-      label: "Circled Circle",
-      latexFormat: "\\circledcirc",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊟",
-      label: "Box Minus",
-      latexFormat: "\\boxminus",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋒",
-      label: "Intersection with Plus",
-      latexFormat: "\\Cap",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋓",
-      label: "Union with Plus",
-      latexFormat: "\\Cup",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊝",
-      label: "Circled Dash",
-      latexFormat: "\\circleddash",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊠",
-      label: "Box Times",
-      latexFormat: "\\boxtimes",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊥",
-      label: "Perpendicular",
-      latexFormat: "\\bot",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊤",
-      label: "Top",
-      latexFormat: "\\top",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋌",
-      label: "Right Three Times",
-      latexFormat: "\\rightthreetimes",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≅",
-      label: "Divide on Times",
-      latexFormat: "\\divideontimes",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⩞",
-      label: "Double Bar Wedge",
-      latexFormat: "\\doublebarwedge",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋋",
-      label: "Left Three Times",
-      latexFormat: "\\leftthreetimes",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≡",
-      label: "Equivalent",
-      latexFormat: "\\equiv",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≤",
-      label: "Less Than or Equal To",
-      latexFormat: "\\leq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≥",
-      label: "Greater Than or Equal To",
-      latexFormat: "\\geq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊥",
-      label: "Perpendicular",
-      latexFormat: "\\perp",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≅",
-      label: "Congruent",
-      latexFormat: "\\cong",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≺",
-      label: "Precedes",
-      latexFormat: "\\prec",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≻",
-      label: "Succeeds",
-      latexFormat: "\\succ",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∣",
-      label: "Divides",
-      latexFormat: "\\mid",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≠",
-      label: "Not Equal To",
-      latexFormat: "\\neq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪯",
-      label: "Precedes or Equal To",
-      latexFormat: "\\preceq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪯",
-      label: "Succeeds or Equal To",
-      latexFormat: "\\succeq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∥",
-      label: "Parallel",
-      latexFormat: "\\parallel",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∼",
-      label: "Similar",
-      latexFormat: "\\sim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≪",
-      label: "Much Less Than",
-      latexFormat: "\\ll",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≫",
-      label: "Much Greater Than",
-      latexFormat: "\\gg",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋈",
-      label: "Bowtie",
-      latexFormat: "\\bowtie",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≃",
-      label: "Asymptotically Equal To",
-      latexFormat: "\\simeq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊂",
-      label: "Subset",
-      latexFormat: "\\subset",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊃",
-      label: "Superset",
-      latexFormat: "\\supset",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋈",
-      label: "Join",
-      latexFormat: "\\Join",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≈",
-      label: "Approximately Equal To",
-      latexFormat: "\\approx",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊆",
-      label: "Subset or Equal To",
-      latexFormat: "\\subseteq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊇",
-      label: "Superset or Equal To",
-      latexFormat: "\\supseteq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋉",
-      label: "Left Semidirect Product",
-      latexFormat: "\\ltimes",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋊",
-      label: "Right Semidirect Product",
-      latexFormat: "\\rtimes",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≐",
-      label: "Corresponds To",
-      latexFormat: "\\doteq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊑",
-      label: "Subset or Equal To",
-      latexFormat: "\\sqsubseteq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊒",
-      label: "Superset or Equal To",
-      latexFormat: "\\sqsupseteq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⌣",
-      label: "Smile",
-      latexFormat: "\\smile",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∝",
-      label: "Proportional To",
-      latexFormat: "\\propto",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊣",
-      label: "Left Tack",
-      latexFormat: "\\dashv",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊣",
-      label: "Turnstile",
-      latexFormat: "\\vdash",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⌢",
-      label: "Frown",
-      latexFormat: "\\frown",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊨",
-      label: "Double Turnstile",
-      latexFormat: "\\models",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∈",
-      label: "Element Of",
-      latexFormat: "\\in",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∋",
-      label: "Contains As Member",
-      latexFormat: "\\ni",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∼",
-      label: "Similar",
-      latexFormat: "\\sim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≦",
-      label: "Less Than or Equal To",
-      latexFormat: "\\leqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≧",
-      label: "Greater Than or Equal To",
-      latexFormat: "\\geqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≶",
-      label: "Less Than or Greater Than",
-      latexFormat: "\\lessgtr",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∼",
-      label: "Tilde Operator",
-      latexFormat: "\\thicksim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⩽",
-      label: "Less Than or Equal To",
-      latexFormat: "\\leqslant",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⩾",
-      label: "Greater Than or Equal To",
-      latexFormat: "\\geqslant",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋚",
-      label: "Less Than Equal To or Greater Than",
-      latexFormat: "\\lesseqgtr",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∽",
-      label: "Reverse Tilde",
-      latexFormat: "\\backsim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪅",
-      label: "Less Than or Approximately Equal To",
-      latexFormat: "\\lessapprox",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪆",
-      label: "Greater Than or Approximately Equal To",
-      latexFormat: "\\gtrapprox",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪋",
-      label: "Less Than Equal To or Greater Than",
-      latexFormat: "\\lesseqqgtr",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋍",
-      label: "Reverse Tilde Equals",
-      latexFormat: "\\backsimeq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋘",
-      label: "Very Much Less Than",
-      latexFormat: "\\lll",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋙",
-      label: "Very Much Greater Than",
-      latexFormat: "\\ggg",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪌",
-      label: "Greater Than Equal To or Less Than",
-      latexFormat: "\\gtreqqless",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≜",
-      label: "Triangle equal",
-      latexFormat: "\\triangleq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋖",
-      label: "Less dot",
-      latexFormat: "\\lessdot",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋗",
-      label: "Greater dot",
-      latexFormat: "\\gtrdot",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋛",
-      label: "Greater equal less",
-      latexFormat: "\\gtreqless",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≗",
-      label: "Circled equal",
-      latexFormat: "\\circeq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≲",
-      label: "Less similar",
-      latexFormat: "\\lesssim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≳",
-      label: "Greater similar",
-      latexFormat: "\\gtrsim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≷",
-      label: "Greater less",
-      latexFormat: "\\gtrless",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≏",
-      label: "Bumpy equal",
-      latexFormat: "\\bumpeq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪕",
-      label: "Equal slant less",
-      latexFormat: "\\eqslantless",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪖",
-      label: "Equal slant greater",
-      latexFormat: "\\eqslantgtr",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∍",
-      label: "Back epsilon",
-      latexFormat: "\\backepsilon",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≎",
-      label: "Bumpy equal",
-      latexFormat: "\\Bumpeq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≾",
-      label: "Precedes similar",
-      latexFormat: "\\precsim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≿",
-      label: "Succeeds similar",
-      latexFormat: "\\succsim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≬",
-      label: "Between",
-      latexFormat: "\\between",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≑",
-      label: "Dot equal dot",
-      latexFormat: "\\doteqdot",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪷",
-      label: "Precedes approximate",
-      latexFormat: "\\precapprox",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪸",
-      label: "Succeeds approximate",
-      latexFormat: "\\succapprox",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋔",
-      label: "Pitchfork",
-      latexFormat: "\\pitchfork",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≈",
-      label: "Thick approximate",
-      latexFormat: "\\thickapprox",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋐",
-      label: "Subset",
-      latexFormat: "\\Subset",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋑",
-      label: "Supset",
-      latexFormat: "\\Supset",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∣",
-      label: "Short mid",
-      latexFormat: "\\shortmid",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≒",
-      label: "Falling dot equal",
-      latexFormat: "\\fallingdotseq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⫅",
-      label: "Subset equal",
-      latexFormat: "\\subseteqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⫆",
-      label: "Supset equal",
-      latexFormat: "\\supseteqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⌢",
-      label: "Small frown",
-      latexFormat: "\\smallfrown",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≓",
-      label: "Rising dot equal",
-      latexFormat: "\\risingdotseq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊏",
-      label: "Square subset",
-      latexFormat: "\\sqsubset",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊐",
-      label: "Square supset",
-      latexFormat: "\\sqsupset",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⌣",
-      label: "Small smile",
-      latexFormat: "\\smallsmile",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∝",
-      label: "Variation proportional to",
-      latexFormat: "\\varpropto",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≼",
-      label: "Precedes curly equal",
-      latexFormat: "\\preccurlyeq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≼",
-      label: "Succeeds curly equal",
-      latexFormat: "\\succcurlyeq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊩",
-      label: "Double turnstile",
-      latexFormat: "\\Vdash",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∴",
-      label: "Therefore",
-      latexFormat: "\\therefore",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋞",
-      label: "Curly equal precedes",
-      latexFormat: "\\curlyeqprec",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋟",
-      label: "Curly equal succeeds",
-      latexFormat: "\\curlyeqsucc",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊨",
-      label: "Double turnstile",
-      latexFormat: "\\vDash",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∵",
-      label: "Because",
-      latexFormat: "\\because",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "◀",
-      label: "Black triangle left",
-      latexFormat: "\\blacktriangleleft",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "▶",
-      label: "Black triangle right",
-      latexFormat: "\\blacktriangleright",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊪",
-      label: "Triple vertical dash",
-      latexFormat: "\\Vvdash",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≖",
-      label: "Circle equal",
-      latexFormat: "\\eqcirc",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊴",
-      label: "Triangle left equal",
-      latexFormat: "\\trianglelefteq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊵",
-      label: "Triangle right equal",
-      latexFormat: "\\trianglerighteq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∥",
-      label: "Double vertical dash",
-      latexFormat: "\\shortparallel",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≠",
-      label: "Not equal",
-      latexFormat: "\\neq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊲",
-      label: "Triangle left",
-      latexFormat: "\\vartriangleleft",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊳",
-      label: "Triangle right",
-      latexFormat: "\\vartriangleright",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∦",
-      label: "Not parallel",
-      latexFormat: "\\nshortparallel",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≆",
-      label: "Not congruent",
-      latexFormat: "\\ncong",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≰",
-      label: "Not less equal",
-      latexFormat: "\\nleq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊈",
-      label: "Not subset equal",
-      latexFormat: "\\nsubseteq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∤",
-      label: "Not mid",
-      latexFormat: "\\nmid",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≰",
-      label: "Not less equal equal",
-      latexFormat: "\\nleqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≱",
-      label: "Not greater equal equal",
-      latexFormat: "\\ngeqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊉",
-      label: "Not superset equal",
-      latexFormat: "\\nsupseteq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∦",
-      label: "Not parallel",
-      latexFormat: "\\nparallel",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≰",
-      label: "Not less equal slant",
-      latexFormat: "\\nleqslant",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≱",
-      label: "Not greater equal slant",
-      latexFormat: "\\ngeqslant",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊈",
-      label: "Not subset equal equal",
-      latexFormat: "\\nsubseteqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∤",
-      label: "Not short mid",
-      latexFormat: "\\nshortmid",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≮",
-      label: "Not less",
-      latexFormat: "\\nless",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≯",
-      label: "Not greater",
-      latexFormat: "\\ngtr",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊉",
-      label: "Not superset equal equal",
-      latexFormat: "\\nsupseteqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "∦",
-      label: "Not parallel",
-      latexFormat: "\\nshortparallel",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊀",
-      label: "Not precedes",
-      latexFormat: "\\nprec",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊁",
-      label: "Not succeeds",
-      latexFormat: "\\nsucc",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊊",
-      label: "Subset not equal",
-      latexFormat: "\\subsetneq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≁",
-      label: "Not similar",
-      latexFormat: "\\nsim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋠",
-      label: "Not precedes equal",
-      latexFormat: "\\npreceq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋡",
-      label: "Not succeeds equal",
-      latexFormat: "\\nsucceq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊋",
-      label: "Superset not equal",
-      latexFormat: "\\supsetneq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊯",
-      label: "Not double turnstile",
-      latexFormat: "\\nVDash",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪹",
-      label: "Precedes not approximate",
-      latexFormat: "\\precnapprox",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪺",
-      label: "Succeeds not approximate",
-      latexFormat: "\\succnapprox",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⫋",
-      label: "Subset not equal equal",
-      latexFormat: "\\subsetneqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊭",
-      label: "Not double turnstile",
-      latexFormat: "\\nvDash",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋨",
-      label: "Not precedes similar",
-      latexFormat: "\\precnsim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋩",
-      label: "Not succeeds similar",
-      latexFormat: "\\succnsim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⫌",
-      label: "Superset not equal equal",
-      latexFormat: "\\supsetneqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊬",
-      label: "Not double turnstile",
-      latexFormat: "\\nvdash",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪉",
-      label: "Less not approximate",
-      latexFormat: "\\lnapprox",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪊",
-      label: "Greater not approximate",
-      latexFormat: "\\gnapprox",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊊",
-      label: "Var subset not equal",
-      latexFormat: "\\varsubsetneq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋪",
-      label: "Not triangle left",
-      latexFormat: "\\ntriangleleft",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪇",
-      label: "Less not equal",
-      latexFormat: "\\lneq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪈",
-      label: "Greater not equal",
-      latexFormat: "\\gneq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⪈",
-      label: "Var superset not equal",
-      latexFormat: "\\varsupsetneq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋬",
-      label: "Not triangle left equal",
-      latexFormat: "\\ntrianglelefteq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≨",
-      label: "Less not equal",
-      latexFormat: "\\lneqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "≩",
-      label: "Greater not equal",
-      latexFormat: "\\gneqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⫋",
-      label: "Var subset not equal equal",
-      latexFormat: "\\varsubsetneqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋫",
-      label: "Not triangle right",
-      latexFormat: "\\ntriangleright",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋦",
-      label: "Not less not similar",
-      latexFormat: "\\lnsim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⋧",
-      label: "Not greater not similar",
-      latexFormat: "\\gnsim",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⫌",
-      label: "Var superset not equal equal",
-      latexFormat: "\\varsupsetneqq",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "←",
-      label: "Left arrow",
-      latexFormat: "\\leftarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⟵",
-      label: "Long left arrow",
-      latexFormat: "\\longleftarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↑",
-      label: "Up arrow",
-      latexFormat: "\\uparrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇐",
-      label: "Left double arrow",
-      latexFormat: "\\Leftarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⟸",
-      label: "Long left double arrow",
-      latexFormat: "\\Longleftarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇑",
-      label: "Up double arrow",
-      latexFormat: "\\Uparrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "→",
-      label: "Right arrow",
-      latexFormat: "\\rightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⟶",
-      label: "Long right arrow",
-      latexFormat: "\\longrightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↓",
-      label: "Down arrow",
-      latexFormat: "\\downarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇒",
-      label: "Right double arrow",
-      latexFormat: "\\Rightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⟹",
-      label: "Long right double arrow",
-      latexFormat: "\\Longrightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇓",
-      label: "Down double arrow",
-      latexFormat: "\\Downarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↔",
-      label: "Left right arrow",
-      latexFormat: "\\leftrightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⟷",
-      label: "Long left right arrow",
-      latexFormat: "\\longleftrightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↕",
-      label: "Up down arrow",
-      latexFormat: "\\updownarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇔",
-      label: "Left right double arrow",
-      latexFormat: "\\Leftrightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⟺",
-      label: "Long left right double arrow",
-      latexFormat: "\\Longleftrightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇕",
-      label: "Up down double arrow",
-      latexFormat: "\\Updownarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↦",
-      label: "Right arrow with tail",
-      latexFormat: "\\mapsto",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⟼",
-      label: "Long right arrow with tail",
-      latexFormat: "\\longmapsto",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↗",
-      label: "North east arrow",
-      latexFormat: "\\nearrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↩",
-      label: "Left hook arrow",
-      latexFormat: "\\hookleftarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↪",
-      label: "Right hook arrow",
-      latexFormat: "\\hookrightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↘",
-      label: "South east arrow",
-      latexFormat: "\\searrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↼",
-      label: "Left harpoon up",
-      latexFormat: "\\leftharpoonup",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇀",
-      label: "Right harpoon up",
-      latexFormat: "\\rightharpoonup",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↙",
-      label: "South west arrow",
-      latexFormat: "\\swarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↽",
-      label: "Left harpoon down",
-      latexFormat: "\\leftharpoondown",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇁",
-      label: "Right harpoon down",
-      latexFormat: "\\rightharpoondown",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↖",
-      label: "North west arrow",
-      latexFormat: "\\nwarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇌",
-      label: "Right left harpoons",
-      latexFormat: "\\rightleftharpoons",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇝",
-      label: "Leadsto",
-      latexFormat: "\\leadsto",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇢",
-      label: "Dashed right arrow",
-      latexFormat: "\\dashrightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇠",
-      label: "Dashed left arrow",
-      latexFormat: "\\dashleftarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇆",
-      label: "Left right arrows",
-      latexFormat: "\\leftrightarrows",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇚",
-      label: "Left left double arrow",
-      latexFormat: "\\Lleftarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↞",
-      label: "Two headed left arrow",
-      latexFormat: "\\twoheadleftarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↢",
-      label: "Left arrow with tail",
-      latexFormat: "\\leftarrowtail",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↫",
-      label: "Loop left arrow",
-      latexFormat: "\\looparrowleft",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇋",
-      label: "Left right harpoons",
-      latexFormat: "\\leftrightharpoons",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↶",
-      label: "Curve left arrow",
-      latexFormat: "\\curvearrowleft",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↺",
-      label: "Circle left arrow",
-      latexFormat: "\\circlearrowleft",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↰",
-      label: "Lsh",
-      latexFormat: "\\Lsh",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇈",
-      label: "Up up arrows",
-      latexFormat: "\\upuparrows",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↿",
-      label: "Up harpoon left",
-      latexFormat: "\\upharpoonleft",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇃",
-      label: "Down harpoon left",
-      latexFormat: "\\downharpoonleft",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⊸",
-      label: "Multimap",
-      latexFormat: "\\multimap",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↭",
-      label: "Left right squig arrow",
-      latexFormat: "\\leftrightsquigarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇉",
-      label: "Right right arrows",
-      latexFormat: "\\rightrightarrows",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇄",
-      label: "Right left arrows",
-      latexFormat: "\\rightleftarrows",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↠",
-      label: "Two headed right arrow",
-      latexFormat: "\\twoheadrightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↣",
-      label: "Right arrow with tail",
-      latexFormat: "\\rightarrowtail",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↬",
-      label: "Loop right arrow",
-      latexFormat: "\\looparrowright",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇌",
-      label: "Right left harpoons",
-      latexFormat: "\\rightleftharpoons",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↷",
-      label: "Curve right arrow",
-      latexFormat: "\\curvearrowright",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↻",
-      label: "Circle right arrow",
-      latexFormat: "\\circlearrowright",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↱",
-      label: "Rsh",
-      latexFormat: "\\Rsh",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇊",
-      label: "Down down arrows",
-      latexFormat: "\\downdownarrows",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↾",
-      label: "Up harpoon right",
-      latexFormat: "\\upharpoonright",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇂",
-      label: "Down harpoon right",
-      latexFormat: "\\downharpoonright",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇝",
-      label: "Right squig arrow",
-      latexFormat: "\\rightsquigarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↚",
-      label: "Not left arrow",
-      latexFormat: "\\nleftarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↛",
-      label: "Not right arrow",
-      latexFormat: "\\nrightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇍",
-      label: "Not left double arrow",
-      latexFormat: "\\nLeftarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇏",
-      label: "Not right double arrow",
-      latexFormat: "\\nRightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "↮",
-      label: "Not left right arrow",
-      latexFormat: "\\nleftrightarrow",
-      value: [],
-      type: "simple",
-    },
-    {
-      name: "⇎",
-      label: "Not left right double arrow",
-      latexFormat: "\\nLeftrightarrow",
-      value: [],
-      type: "simple",
     },
   ];
 
@@ -2634,6 +76,16 @@ export const MathEquationEditorOutput = () => {
       label: "Integral",
       latexFormat: "\\int{}",
       value: [],
+      type: "complex",
+    },
+    {
+      name: "Matrix",
+      label: "Matrix",
+      row: 2,
+      column: 3,
+      latexFormat:
+        "\\begin{pmatrix} 1 & 0 & 0 & 4 & 2_{s}^2 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ end{pmatrix}",
+      value: [[], [], [], [], [], []],
       type: "complex",
     },
   ];
@@ -5203,7 +2655,7 @@ export const MathEquationEditorOutput = () => {
     const copy = [...equation];
     const lastIdx = splittedIndexes.pop();
     const targetArray = getValueAtIndex(copy, splittedIndexes);
-    console.log("target array 552 ", targetArray, selectedEditArea, lastIdx);
+    console.log("target array 2656 ", targetArray, selectedEditArea, lastIdx);
     if (lastIdx === "n") {
       setLengthOfSelectedArea(targetArray?.value1?.length);
       setCursorIndex(targetArray?.value1?.length - 1);
@@ -5214,8 +2666,13 @@ export const MathEquationEditorOutput = () => {
       setLengthOfSelectedArea(targetArray?.value?.length);
       setCursorIndex(targetArray?.value?.length - 1);
     } else {
-      setLengthOfSelectedArea(targetArray?.length);
-      setCursorIndex(targetArray?.length - 1);
+      if (targetArray.name === "Matrix") {
+        setLengthOfSelectedArea(targetArray?.value[lastIdx]?.length);
+        setCursorIndex(targetArray?.value[lastIdx]?.length - 1);
+      } else {
+        setLengthOfSelectedArea(targetArray?.length);
+        setCursorIndex(targetArray?.length - 1);
+      }
     }
 
     console.log(
@@ -5258,13 +2715,21 @@ export const MathEquationEditorOutput = () => {
   // mouse outside click event handler
   useEffect(() => {
     const handleClickOutside = (event) => {
-      console.log("event ", event.target.className);
+      console.log(
+        "event handleClickOutside",
+        event.target.className,
+        event.ctrlKey,
+        event.key
+      );
+
       if (
         editAreaRef.current &&
         !editAreaRef.current.contains(event.target) &&
+        event.target.className !== "" &&
         !event.target.className.includes("panel-button-ref") &&
         event.target.className !== "panel-button" &&
-        !event.target.className.includes("panel-tab")
+        !event.target.className.includes("panel-tab") &&
+        event.target.className.includes("MathEquationEditorOutput")
       ) {
         setSelectedEditArea("");
       }
@@ -5279,12 +2744,24 @@ export const MathEquationEditorOutput = () => {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      handleKeyDownOutside(
-        event,
-        selectedEditArea,
-        lengthOfSelectedArea,
-        cursorIndex
+      console.log(
+        "event handleClickOutside",
+        event.target.className,
+        event.ctrlKey,
+        event.key
       );
+      if (event.ctrlKey && (event.key === "s" || event.key === "s")) {
+        event.preventDefault();
+        alert("ctrl + s");
+      }
+      if (!event.ctrlKey && !searchModal) {
+        handleKeyDownOutside(
+          event,
+          selectedEditArea,
+          lengthOfSelectedArea,
+          cursorIndex
+        );
+      }
     };
 
     const handleKeyUp = () => {
@@ -5298,12 +2775,14 @@ export const MathEquationEditorOutput = () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [selectedEditArea, cursorIndex, lengthOfSelectedArea]);
+  }, [selectedEditArea, cursorIndex, lengthOfSelectedArea, searchModal]);
 
   // equation change use effect handler
   useEffect(() => {
     console.log("equation  uf", equation);
     const result = convertToLatex(equation);
+    console.log("equation  uf result", result);
+
     renderEquation(result);
   }, [equation]);
 
@@ -5361,7 +2840,12 @@ export const MathEquationEditorOutput = () => {
     const copy = [...equation];
     const lastIdx = indexes.pop();
     const targetArray = getValueAtIndex(copy, indexes);
-    console.log("target array 101", indexes, targetArray, lastIdx);
+    console.log(
+      " inside updateValueAtIndex target array 101",
+      indexes,
+      targetArray,
+      lastIdx
+    );
     if (!Array.isArray(targetArray)) {
       if (lastIdx === "n") {
         if (value === "Backspace") {
@@ -5386,8 +2870,7 @@ export const MathEquationEditorOutput = () => {
           setCursorIndex((prev) => prev + 1);
         }
         setEquation(copy);
-      }
-      if (lastIdx === "d") {
+      } else if (lastIdx === "d") {
         if (value === "Backspace") {
           // targetArray?.value2?.pop();
           targetArray?.value2?.splice(cursorIndex, 1);
@@ -5408,8 +2891,7 @@ export const MathEquationEditorOutput = () => {
           setCursorIndex((prev) => prev + 1);
         }
         setEquation(copy);
-      }
-      if (lastIdx === "v") {
+      } else if (lastIdx === "v") {
         if (value === "Backspace") {
           // targetArray?.value?.pop();
           targetArray?.value?.splice(cursorIndex, 1);
@@ -5429,6 +2911,28 @@ export const MathEquationEditorOutput = () => {
           setCursorIndex((prev) => prev + 1);
         }
         console.log("copy before setting");
+        setEquation(copy);
+      } else {
+        if (value === "Backspace") {
+          // targetArray?.value?.pop();
+          targetArray?.value[lastIdx]?.splice(cursorIndex, 1);
+          // minus
+          setCursorIndex((prev) => (prev === -1 ? -1 : prev - 1)); // changed from 0 ? 0
+        } else {
+          // targetArray.value = [
+          //   ...targetArray.value,
+          //   Array.isArray(value) ? [...value] : value,
+          // ];
+          console.log("copy before setting", lastIdx, value);
+
+          targetArray.value[lastIdx].splice(
+            cursorIndex + 1,
+            0,
+            Array.isArray(value) ? [...value] : value
+          );
+          // plus
+          setCursorIndex((prev) => prev + 1);
+        }
         setEquation(copy);
       }
     }
@@ -5564,14 +3068,31 @@ export const MathEquationEditorOutput = () => {
 
   // panel button inserting
   const panelButtonClicked = (buttonInfo) => {
-    console.log();
+    console.log("buttonInfo panelButtonClicked", buttonInfo);
+    if (buttonInfo.name === "Matrix") {
+      let row = prompt("Number of rows");
+      let column = prompt("Number of column");
+      buttonInfo.row = row;
+      buttonInfo.column = column;
+      buttonInfo.value = [...Array(row * column)].map((value) => []);
+
+      console.log(" buttonInfo.name ");
+    }
+
     let splittedIndexes = selectedEditArea.split(",");
     const copy = [...equation];
     const lastIdx = splittedIndexes.pop();
     const targetArray = getValueAtIndex(copy, splittedIndexes);
+    console.log(
+      " inside updateValueAtIndex target array 101",
+      splittedIndexes,
+      targetArray,
+      lastIdx
+    );
     console.log("target arrau ", targetArray, lastIdx, splittedIndexes);
 
     if (selectedEditArea !== "") {
+      // if (!Array.isArray(targetArray)) {
       if (lastIdx === "n") {
         // targetArray.value1.push({ ...buttonInfo, value1: [] });
         targetArray.value1.splice(cursorIndex + 1, 0, {
@@ -5612,12 +3133,32 @@ export const MathEquationEditorOutput = () => {
       } else {
         // setEquation((prev) => [...prev, { ...buttonInfo, value: [] }]);
         setEquation((prev) => {
+          console.log("3101");
+          // return prev;
           let finalValue = [...prev];
           // finalValue.splice(cursorIndex + 1, 0, { ...buttonInfo, value: [] });
-          finalValue.splice(cursorIndex + 1, 0, {
-            ...buttonInfo,
-            value: [],
-          });
+
+          if (targetArray.name === "Matrix") {
+            targetArray.value[lastIdx]?.splice(cursorIndex + 1, 0, {
+              ...buttonInfo,
+              // value: [],
+            });
+            console.log(
+              " inside updateValueAtIndex target array 101 after 3111 ",
+              splittedIndexes,
+              targetArray.value[lastIdx],
+              "ss",
+              lastIdx,
+              targetArray,
+              finalValue
+            );
+          } else {
+            finalValue.splice(cursorIndex + 1, 0, {
+              ...buttonInfo,
+              // value: [],
+            });
+          }
+
           // console.log("equation uf 934", finalValue, ...buttonInfo);
 
           return finalValue;
@@ -6069,6 +3610,143 @@ export const MathEquationEditorOutput = () => {
       );
     }
 
+    if (buttonInfo.name === "Matrix") {
+      let editAreaIndex;
+      let cursorPointerIndex;
+      if (typeof nest === "object") {
+        editAreaIndex = "0";
+        cursorPointerIndex = nest[0];
+      } else {
+        cursorPointerIndex = Number(
+          nest.split(",")[nest.split(",").length - 1]
+        );
+        let lastIndex = nest.lastIndexOf(",");
+        editAreaIndex = nest.substring(0, lastIndex);
+        console.log(" last index ", nest, cursorPointerIndex, editAreaIndex);
+        // editAreaIndex = 0;
+      }
+      return (
+        <div
+          className={` ${classes["matrix-container"]}  ${
+            selectedEditArea === editAreaIndex &&
+            cursorIndex === cursorPointerIndex
+              ? classes["cursor"]
+              : selectedEditArea === editAreaIndex &&
+                cursorIndex === -1 &&
+                cursorPointerIndex === 0
+              ? classes["cursor-1"]
+              : ""
+          }`}
+        >
+          {/* {buttonInfo?.value.map((value, index) => (
+              <div>
+                {console.log("matrix value", value, buttonInfo)}
+
+                {typeof value === "string" ? (
+                  value === " " ? (
+                    <span>&nbsp;</span>
+                  ) : (
+                    <p
+                      className={
+                        selectedEditArea === `${nest},v` &&
+                        cursorIndex === index
+                          ? classes["cursor"]
+                          : selectedEditArea === `${nest},v` &&
+                            cursorIndex === -1 &&
+                            index === 0
+                          ? classes["cursor-1"]
+                          : ""
+                      }
+                    >
+                      {value}
+                    </p>
+                  )
+                ) : (
+                  <div>{renderComponent(value, `${nest},v,${index}`)}</div>
+                )}
+              </div>
+            ))} */}
+          {console.log("buttonInfo 3646 ", buttonInfo.row, buttonInfo.column)}
+
+          {[...Array(Number(buttonInfo.row))].map((_, rowIndex) => (
+            <div className={classes["matrix-row"]}>
+              {[...Array(Number(buttonInfo.column))].map((_, columnIndex) => (
+                <div
+                  className={`${classes["matrix-column"]} ${
+                    buttonInfo?.value?.length > 0
+                      ? classes["edit-area"]
+                      : classes["edit-area-empty"]
+                  }  ${
+                    selectedEditArea ===
+                      `${nest},${buttonInfo.column * rowIndex + columnIndex}` &&
+                    classes["selected-edit-area"]
+                  } `}
+                  id={`${nest},${buttonInfo.column * rowIndex + columnIndex}`}
+                  ref={editAreaRef}
+                  onClick={(e) =>
+                    selectedEditAreaHandler(
+                      e,
+                      `${nest},${buttonInfo.column * rowIndex + columnIndex}`
+                    )
+                  }
+                >
+                  {
+                    buttonInfo?.value[
+                      buttonInfo.column * rowIndex + columnIndex
+                    ]
+                  }
+                  {buttonInfo?.value[
+                    buttonInfo.column * rowIndex + columnIndex
+                  ].map((value, index) => (
+                    <div>
+                      {console.log("matrix value", value, buttonInfo)}
+
+                      {typeof value === "string" ? (
+                        value === " " ? (
+                          <span>&nbsp;</span>
+                        ) : (
+                          <p
+                            className={
+                              selectedEditArea === `${nest},v` &&
+                              cursorIndex === index
+                                ? classes["cursor"]
+                                : selectedEditArea === `${nest},v` &&
+                                  cursorIndex === -1 &&
+                                  index === 0
+                                ? classes["cursor-1"]
+                                : ""
+                            }
+                          >
+                            {value}
+                          </p>
+                        )
+                      ) : (
+                        <div>
+                          {renderComponent(
+                            value,
+                            `${nest},v,${
+                              buttonInfo.column * rowIndex + columnIndex
+                            },${index}`
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {console.log(
+                    "buttonInfo?.value[ buttonInfo.column * rowIndex + columnIndex ]",
+                    buttonInfo?.value[
+                      buttonInfo.column * rowIndex + columnIndex
+                    ]
+                  )}
+                  {/* {buttonInfo.column * rowIndex + columnIndex} */}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
     if (buttonInfo.name === "ω") {
       return <div className={classes["simple-container"]}>ω</div>;
     }
@@ -6082,9 +3760,15 @@ export const MathEquationEditorOutput = () => {
   const convertToLatex = (arr) => {
     let latex = "";
 
+    console.log("equation uf convertedToLatex", arr);
+    if (!arr) {
+      return "";
+    }
     arr.forEach((item) => {
       if (typeof item === "object") {
-        if (item.type === "simple") {
+        if (Array.isArray(item)) {
+          latex += `${item}`;
+        } else if (item.type === "simple") {
           latex += `${item.latexFormat} `;
           //   if (item.name === "±") {
           //     latex += `\\pm `;
@@ -6104,14 +3788,30 @@ export const MathEquationEditorOutput = () => {
           latex += `_{${convertToLatex(item.value)}}`;
         } else if (item.name === "Integral") {
           latex += `\\int{${convertToLatex(item.value)}}`;
-        } else if (item.name === "Integral") {
-          latex += `\\int{${convertToLatex(item.value)}}`;
+        } else if (item.name === "Matrix") {
+          console.log("3710 ", item);
+          let matrixLatexValue = `\\begin{pmatrix}`;
+          for (let i = 0; i < item.row; i++) {
+            for (let j = 0; j < item.column; j++) {
+              if (j !== 0) {
+                matrixLatexValue += " & ";
+              }
+              matrixLatexValue += `${convertToLatex(
+                item.value[item.column * i + j]
+              )}`;
+            }
+            matrixLatexValue += ` \\\\ `;
+          }
+          matrixLatexValue += ` \\end{pmatrix}`;
+          // latex += `\\begin{pmatrix} 1 & 0 & 0 & 4 & 2_{s}^2 \\\\ 0 & 1 & 0 \\\\ 0 & 0 & 1  \\\\ \\end{pmatrix}`;
+          latex += matrixLatexValue;
         } else if (item.name === "Integral") {
           latex += `\\int{${convertToLatex(item.value)}}`;
         } else {
           // Handle other types of objects here
         }
       } else {
+        console.log("equation uf convertedToLatex else ", item);
         latex += item;
       }
     });
@@ -6126,6 +3826,7 @@ export const MathEquationEditorOutput = () => {
       const html = katex.renderToString(convertedLatex, {
         output: "mathml", // "html"
         throwOnError: false,
+        // displayMode: true,
       });
       console.log("rendered html ", html);
       // Clear contents of math-output div
@@ -6134,18 +3835,77 @@ export const MathEquationEditorOutput = () => {
       katex.render(convertedLatex, mathOutputDiv, {
         output: "mathml",
         throwOnError: false,
+        maxExpand: 1000,
+        maxSize: 500,
+        minRuleThickness: 0.04,
+        // displayMode: true,
       });
-      //       katex.render(convertedLatex, document.getElementById("math-output"), {
-      //         throwOnError: false,
-      //       });
     } catch (error) {
       console.error("Error rendering LaTeX:", error);
     }
   };
 
+  // modal close
+  const hoverInfoModalCloseHandler = () => {
+    setHoverDetailsModal(false);
+  };
+
+  const searchModalCloseHandler = () => {
+    setSearchModal(false);
+  };
+
+  const svgRef = React.useRef(null);
+
+  const renderSVG = () => {
+    const svgString = katex.renderToString(latex, { throwOnError: false });
+    const svgElement = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "svg"
+    );
+    svgElement.innerHTML = svgString;
+    return svgElement;
+  };
+
+  const saveAsWMF = () => {
+    const svgElement = renderSVG();
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvg(canvas, new XMLSerializer().serializeToString(svgElement));
+
+    const wmf = wmfjs.WMF.create(ctx);
+    const wmfData = wmf.getData();
+    const blob = new Blob([wmfData], { type: "image/x-wmf" });
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "equation.wmf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className={classes.main}>
       <div className={classes["header-container"]}>
+        {/* <div>
+          <div dangerouslySetInnerHTML={{ __html: renderEquation2() }} />
+          <button onClick={saveAsWMF}>Save as WMF</button>
+        </div> */}
+        <div>
+          <div ref={svgRef}>{/* Render KaTeX equation here */}</div>
+          <button onClick={saveAsWMF}>Save as WMF</button>
+        </div>
+        <div
+          className={classes["search-container"]}
+          title={"Search Symbols"}
+          onClick={() => {
+            setSearchModal(true);
+          }}
+        >
+          <img src={searchIcon} width={"25rem"}></img>
+        </div>
         <div className={classes["panel-buttons-tabs"]}>
           {tabs.map((tab) => (
             <div
@@ -6166,20 +3926,20 @@ export const MathEquationEditorOutput = () => {
               onClick={() => panelButtonClicked({ ...deepClone(buttonInfo) })}
               onMouseOver={() => {
                 setHoverButtonInfo(buttonInfo);
-                setTimeout(() => {
-                  setHoverDetails(true);
-                }, [400]);
-                // setHoverDetails(true);
+                // setTimeout(() => {
+                setHoverDetailsModal(true);
+                // }, [400]);
+                // setHoverDetailsModal(true);
               }}
               onMouseLeave={() => {
-                setTimeout(() => {
-                  if (hoverDetails) {
-                    setHoverDetails(false);
-                  }
-                }, [400]);
-                // setHoverDetails(true);
+                // setTimeout(() => {
+                if (hoverDetailsModal) {
+                  hoverInfoModalCloseHandler();
+                }
+                // }, [400]);
+                // setHoverDetailsModal(true);
 
-                // setHoverDetails(false);
+                // setHoverDetailsModal(false);
               }}
               className={`panel-button-ref ${classes["panel-button"]}`}
             >
@@ -6199,6 +3959,7 @@ export const MathEquationEditorOutput = () => {
         >
           {equation.map((value, index) => (
             <div>
+              {console.log("equation value ", value)}
               {typeof value === "string" ? (
                 value === " " ? (
                   <span
@@ -6250,7 +4011,15 @@ export const MathEquationEditorOutput = () => {
       </div>
       <div className={classes["footer-container"]}></div>
 
-      {hoverDetails && <HoverDetailsModal buttonInfo={hoverButtonInfo} />}
+      {hoverDetailsModal && <HoverDetailsModal buttonInfo={hoverButtonInfo} />}
+      {searchModal && (
+        <SearchModal
+          closeSearchModal={searchModalCloseHandler}
+          panelButtonClicked={panelButtonClicked}
+          selectedEditArea={selectedEditArea}
+          cursorIndex={cursorIndex}
+        />
+      )}
     </div>
   );
 };
