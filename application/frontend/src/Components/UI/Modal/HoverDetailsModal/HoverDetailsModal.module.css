@@ -9,6 +9,11 @@
   color: #0d1b2a;
 }
 
+.details-modal * {
+  margin: 0rem;
+  padding: 0rem;
+}
+
 .modal-header h2 {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",

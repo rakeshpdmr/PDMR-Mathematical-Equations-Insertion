@@ -1,11 +1,17 @@
 import React, { useState, useRef, useEffect, Component } from "react";
+import { toPng } from "html-to-image";
+import { saveAs } from "file-saver";
 import classes from "./MathEquationEditorOutput.module.css";
 import HoverDetailsModal from "../UI/Modal/HoverDetailsModal/HoverDetailsModal";
 import MatrixInputModal from "../UI/Modal/MatrixInputModal/MatrixInputModal";
 import SearchModal from "../UI/Modal/SearchModal/SearchModal";
 import searchIcon from "../../Assets/search.png";
+import cloudDownloadIcon from "../../Assets/cloud-download.png";
 import katex from "katex";
-import canvg from "canvg";
+// import canvg from "canvg";
+// import { default as canvg } from "canvg";
+import { Canvg } from "canvg";
+import WMF from "wmf";
 // import wmfjs from "wmf-js";
 import buttonInfos from "../Infos/buttonInfos.json";
 
@@ -1124,10 +1130,15 @@ export const MathEquationEditorOutput = () => {
                         ) : (
                           <p
                             className={
-                              selectedEditArea === `${nest},v` &&
-                              cursorIndex === index
+                              selectedEditArea ===
+                                `${nest},${
+                                  buttonInfo.column * rowIndex + columnIndex
+                                }` && cursorIndex === index
                                 ? classes["cursor"]
-                                : selectedEditArea === `${nest},v` &&
+                                : selectedEditArea ===
+                                    `${nest},${
+                                      buttonInfo.column * rowIndex + columnIndex
+                                    }` &&
                                   cursorIndex === -1 &&
                                   index === 0
                                 ? classes["cursor-1"]
@@ -1252,9 +1263,9 @@ export const MathEquationEditorOutput = () => {
       katex.render(convertedLatex, mathOutputDiv, {
         output: "mathml",
         throwOnError: false,
-        maxExpand: 1000,
-        maxSize: 500,
-        minRuleThickness: 0.04,
+        // maxExpand: 1000,
+        // maxSize: 500,
+        // minRuleThickness: 0.04,
         // displayMode: true,
       });
     } catch (error) {
@@ -1287,33 +1298,90 @@ export const MathEquationEditorOutput = () => {
     setMatrixInputModal(false);
   };
 
-  const svgRef = React.useRef(null);
+  // const svgRef = React.useRef(null);
 
-  const renderSVG = () => {
-    const svgString = katex.renderToString(equation, { throwOnError: false });
-    const svgElement = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "svg"
-    );
-    svgElement.innerHTML = svgString;
-    return svgElement;
+  // const renderSVG = () => {
+  //   const svgString = katex.renderToString(convertToLatex(equation), {
+  //     throwOnError: false,
+  //   });
+  //   const svgElement = document.createElementNS(
+  //     "http://www.w3.org/2000/svg",
+  //     "svg"
+  //   );
+  //   svgElement.innerHTML = svgString;
+  //   return svgElement;
+  // };
+
+  // const saveAsWMF = () => {
+  //   const svgElement = renderSVG();
+  //   const canvas = document.createElement("canvas");
+  //   const ctx = canvas.getContext("2d");
+
+  //   let canvgObj = new Canvg();
+  //   // canvg(canvas, new XMLSerializer().serializeToString(svgElement));
+  //   canvgObj(canvas, new XMLSerializer().serializeToString(svgElement));
+  //   console.log(" canvg ", canvgObj);
+
+  //   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  //   const wmf = new WMF(imageData.width, imageData.height);
+  //   wmf.drawImage(imageData.data, imageData.width, imageData.height);
+  //   const wmfData = wmf.createBuffer();
+
+  //   const blob = new Blob([wmfData], { type: "image/x-wmf" });
+  //   const url = window.URL.createObjectURL(blob);
+
+  //   const link = document.createElement("a");
+  //   link.href = url;
+  //   link.download = "equation.wmf";
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
+
+  const equationRef = React.useRef(null);
+
+  const renderEquation2 = () => {
+    try {
+      const options = {
+        output: "mathml",
+        throwOnError: false,
+        // maxExpand: 1000,
+        // maxSize: 500,
+        // minRuleThickness: 0.04,
+        // displayMode: true,
+      };
+      katex.render(convertToLatex(equation), equationRef.current, options);
+    } catch (error) {
+      console.error("Error rendering LaTeX:", error);
+    }
   };
 
   const saveAsWMF = () => {
-    // const svgElement = renderSVG();
-    // const canvas = document.createElement("canvas");
-    // const ctx = canvas.getContext("2d");
-    // canvg(canvas, new XMLSerializer().serializeToString(svgElement));
-    // const wmf = wmfjs.WMF.create(ctx);
-    // const wmfData = wmf.getData();
-    // const blob = new Blob([wmfData], { type: "image/x-wmf" });
-    // const url = window.URL.createObjectURL(blob);
-    // const link = document.createElement("a");
-    // link.href = url;
-    // link.download = "equation.wmf";
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
+    renderEquation2();
+    toPng(equationRef.current, { backgroundColor: "#fff" })
+      .then((dataUrl) => {
+        // Convert PNG to WMF (use a library or tool to accomplish this)
+        // For demonstration purposes, we'll just save the PNG
+        const blob = dataURItoBlob(dataUrl);
+        saveAs(blob, "equation.png");
+        let downloadElement = document.getElementById("final-equation-2");
+        downloadElement.innerHTML = "";
+      })
+      .catch((error) => {
+        console.error("Error converting HTML to image:", error);
+      });
+  };
+
+  // Utility function to convert data URI to Blob
+  const dataURItoBlob = (dataURI) => {
+    const byteString = atob(dataURI.split(",")[1]);
+    const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
   };
 
   return (
@@ -1323,10 +1391,7 @@ export const MathEquationEditorOutput = () => {
           <div dangerouslySetInnerHTML={{ __html: renderEquation2() }} />
           <button onClick={saveAsWMF}>Save as WMF</button>
         </div> */}
-        <div>
-          <div ref={svgRef}>{/* Render KaTeX equation here */}</div>
-          <button onClick={saveAsWMF}>Save as WMF</button>
-        </div>
+
         <div
           className={classes["search-container"]}
           title={"Search Symbols"}
@@ -1335,6 +1400,15 @@ export const MathEquationEditorOutput = () => {
           }}
         >
           <img src={searchIcon} width={"25rem"}></img>
+        </div>
+        <div
+          className={classes["download-icon-container"]}
+          title={"Download Equation"}
+          onClick={() => {
+            saveAsWMF();
+          }}
+        >
+          <img src={cloudDownloadIcon} width={"25rem"}></img>
         </div>
         <div className={classes["panel-buttons-tabs"]}>
           {tabs.map((tab) => (
@@ -1428,18 +1502,30 @@ export const MathEquationEditorOutput = () => {
         </div>
 
         <div className={classes["latex-output"]}>
-          <h2>Latex Format Output</h2>
+          <h3>Latex Format Output</h3>
           <div className={classes["latex-equation"]}>
             {convertToLatex(equation)}
           </div>
         </div>
 
         <div className={classes["final-output"]}>
-          <h2>Final Equation</h2>
-          <div id="math-output" className={classes["final-equation"]}></div>
+          <h3>Final Equation</h3>
+          <div
+            id="math-output"
+            // ref={equationRef}
+            className={classes["final-equation"]}
+          ></div>
         </div>
       </div>
-      <div className={classes["footer-container"]}></div>
+      <div className={classes["footer-container"]}>
+        {
+          <div
+            className={classes["final-equation2"]}
+            ref={equationRef}
+            id={"final-equation-2"}
+          />
+        }
+      </div>
 
       {hoverDetailsModal && <HoverDetailsModal buttonInfo={hoverButtonInfo} />}
       {searchModal && (

@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="App">
       <div className="main-app">
-        <h2>PDMR Math Equations Insertion.</h2>
+        <h2 className={"main-header"}>PDMR Math Equations Insertion.</h2>
         <MathEquationEditorOutput />
       </div>
     </div>

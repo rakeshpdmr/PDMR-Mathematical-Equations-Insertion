@@ -14,6 +14,8 @@
 .main-app {
 }
 
-.App h2 {
+.main-header {
   color: #e0e1dd;
+  margin: 0;
+  /* padding-bottom: 0.5rem; */
 }
