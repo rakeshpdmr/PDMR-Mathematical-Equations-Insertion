@@ -16,7 +16,7 @@
   right: 0.5rem;
   background-color: #f5f5f5;
   border-radius: 0.4rem;
-  padding: 0.2rem;
+  padding: 0.1rem;
   border: 2px solid #0d1b2a;
 }
 
@@ -103,6 +103,7 @@
   max-width: 40rem;
   max-height: 7rem;
   border: 1px solid #0d1b2a;
+  margin-bottom: 1rem;
   padding: 2rem;
   overflow-x: scroll;
 }
@@ -304,6 +305,12 @@
   align-items: center;
 }
 
+.integral-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .edit-area {
 }
 
@@ -369,6 +376,14 @@
   align-items: center; */
   /* background-color: red; */
   /* gap: 1rem; */
+}
+
+.matrix-cell {
+  display: flex;
+  flex-direction: row;
+  /* gap: 1rem;
+  justify-content: center;
+  align-items: center; */
 }
 /* .superscript-container .edit-area {
   background-color: aqua;

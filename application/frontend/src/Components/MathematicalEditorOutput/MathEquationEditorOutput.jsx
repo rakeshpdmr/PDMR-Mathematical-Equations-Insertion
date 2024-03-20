@@ -72,6 +72,10 @@ export const MathEquationEditorOutput = () => {
   const [lengthOfSelectedArea, setLengthOfSelectedArea] = useState(0);
   const [cursorIndex, setCursorIndex] = useState(0);
 
+  //undo
+  const [history, setHistory] = useState([]);
+  const [redoHistory, setRedoHistory] = useState([]);
+
   // console Use Effects
   useEffect(() => {
     console.log("panelButtons", panelButtons);
@@ -82,6 +86,14 @@ export const MathEquationEditorOutput = () => {
     console.log(" cursor cursor index ", cursorIndex);
     console.log("cursor selectedEditArea ", selectedEditArea);
   }, [lengthOfSelectedArea, cursorIndex]);
+
+  useEffect(() => {
+    console.log("history changed ", history);
+  }, [history]);
+
+  // useEffect(() => {
+  //   console.log("equation uf  changed ", equation);
+  // }, [equation]);
 
   // use effects
   useEffect(() => {
@@ -125,22 +137,12 @@ export const MathEquationEditorOutput = () => {
 
   useEffect(() => {
     console.log("selectedEditArea uf", selectedEditArea);
+    console.log(" equation uf ", equation);
     let splittedIndexes = selectedEditArea.split(",");
     const copy = [...equation];
     const lastIdx = splittedIndexes.pop();
     const targetArray = getValueAtIndex(copy, splittedIndexes);
     setLengthOfSelectedArea(targetArray.length);
-    console.log(
-      "target arrau 547",
-      lastIdx === "n"
-        ? targetArray?.value1?.length
-        : lastIdx === "d"
-        ? targetArray?.value2?.length
-        : targetArray?.value?.length,
-      targetArray,
-      lastIdx,
-      splittedIndexes
-    );
   }, [equation]);
 
   // useEffect(() => {
@@ -154,7 +156,23 @@ export const MathEquationEditorOutput = () => {
         "event handleClickOutside",
         event.target.className,
         event.ctrlKey,
-        event.key
+        event.key,
+        "check ",
+        editAreaRef.current,
+        !editAreaRef?.current?.contains(event.target),
+        event.target.className !== "",
+        !event.target.className.includes("panel-button-ref"),
+        event.target.className !== "panel-button",
+        !event.target.className.includes("panel-tab"),
+        event.target.className.includes("MathEquationEditorOutput"),
+        "sss",
+        editAreaRef.current &&
+          !editAreaRef.current.contains(event.target) &&
+          event.target.className !== "" &&
+          !event.target.className.includes("panel-button-ref") &&
+          event.target.className !== "panel-button" &&
+          !event.target.className.includes("panel-tab") &&
+          event.target.className.includes("MathEquationEditorOutput")
       );
 
       if (
@@ -189,6 +207,14 @@ export const MathEquationEditorOutput = () => {
         event.preventDefault();
         alert("ctrl + s");
       }
+      if (event.ctrlKey && (event.key === "z" || event.key === "Z")) {
+        event.preventDefault();
+        handleUndo(equation, history);
+      }
+      if (event.ctrlKey && (event.key === "y" || event.key === "Y")) {
+        event.preventDefault();
+        handleRedo(equation, redoHistory);
+      }
       if (!event.ctrlKey && !searchModal && !matrixInputModal) {
         handleKeyDownOutside(
           event,
@@ -210,13 +236,20 @@ export const MathEquationEditorOutput = () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [selectedEditArea, cursorIndex, lengthOfSelectedArea, searchModal]);
+  }, [
+    selectedEditArea,
+    cursorIndex,
+    lengthOfSelectedArea,
+    searchModal,
+    equation,
+    history,
+    redoHistory,
+  ]);
 
   // equation change use effect handler
   useEffect(() => {
-    console.log("equation  uf", equation);
     const result = convertToLatex(equation);
-    console.log("equation  uf result", result);
+    console.log("equation uf after converted", result);
 
     renderEquation(result);
   }, [equation]);
@@ -272,6 +305,7 @@ export const MathEquationEditorOutput = () => {
   // updating value of selected edit area accordingly
   const updateValueAtIndex = (indexes, value) => {
     console.log("inside updateValueAtIndex ", indexes, value);
+    handleChange(deepClone(equation));
     const copy = [...equation];
     const lastIdx = indexes.pop();
     const targetArray = getValueAtIndex(copy, indexes);
@@ -304,7 +338,10 @@ export const MathEquationEditorOutput = () => {
           // plus
           setCursorIndex((prev) => prev + 1);
         }
+
         setEquation(copy);
+
+        console.log("history changed");
       } else if (lastIdx === "d") {
         if (value === "Backspace") {
           // targetArray?.value2?.pop();
@@ -326,6 +363,7 @@ export const MathEquationEditorOutput = () => {
           setCursorIndex((prev) => prev + 1);
         }
         setEquation(copy);
+        // handleChange(deepClone(copy));
       } else if (lastIdx === "v") {
         if (value === "Backspace") {
           // targetArray?.value?.pop();
@@ -347,6 +385,7 @@ export const MathEquationEditorOutput = () => {
         }
         console.log("copy before setting");
         setEquation(copy);
+        // handleChange(deepClone(copy));
       } else {
         if (value === "Backspace") {
           // targetArray?.value?.pop();
@@ -369,6 +408,7 @@ export const MathEquationEditorOutput = () => {
           setCursorIndex((prev) => prev + 1);
         }
         setEquation(copy);
+        // handleChange(deepClone(copy));
       }
     }
     if (Array.isArray(targetArray)) {
@@ -382,6 +422,7 @@ export const MathEquationEditorOutput = () => {
       // plus
       setCursorIndex((prev) => prev + 1);
       setEquation(copy);
+      // handleChange(deepClone(copy));
     }
   };
 
@@ -415,14 +456,17 @@ export const MathEquationEditorOutput = () => {
     ) {
       if (selectedEditArea === "0") {
         // setEquation((prev) => [...prev, event.key]);
+        handleChange(deepClone(equation));
+        let finalValue = [...equation];
+        finalValue.splice(cursorIndex + 1, 0, event.key);
         setEquation((prev) => {
-          let finalValue = [...prev];
+          finalValue = [...prev];
           finalValue.splice(cursorIndex + 1, 0, event.key);
-          console.log("equation uf ", finalValue);
 
           return finalValue;
         });
-
+        // handleChange(deepClone(finalValue), " 449 ");
+        console.log(" history change 449 ", finalValue);
         // plus
         setCursorIndex((prev) => prev + 1);
       } else {
@@ -431,13 +475,17 @@ export const MathEquationEditorOutput = () => {
     } else if (selectedEditArea !== "" && event.code === "Space") {
       if (selectedEditArea === "0") {
         // setEquation((prev) => [...prev, " "]);
+        handleChange(deepClone(equation));
+        let finalValue = [...equation];
+        finalValue.splice(cursorIndex + 1, 0, " ");
+
         setEquation((prev) => {
           let finalValue = [...prev];
           finalValue.splice(cursorIndex + 1, 0, " ");
-          console.log("equation uf ", finalValue);
 
           return finalValue;
         });
+        // handleChange(deepClone(finalValue));
 
         // plus
         setCursorIndex((prev) => prev + 1);
@@ -447,14 +495,18 @@ export const MathEquationEditorOutput = () => {
     } else if (selectedEditArea !== "" && event.key === "Backspace") {
       console.log("backspace selected edited ", selectedEditArea);
       if (selectedEditArea === "0") {
+        handleChange(deepClone(equation));
+        let final = [...equation];
+        final?.splice(cursorIndex, 1);
         setEquation((prev) => {
           let final = [...prev];
           final?.splice(cursorIndex, 1);
           // final.pop();
-          console.log("final value backspace ", final);
 
           return final;
         });
+        console.log("final value backspace ", final);
+        // handleChange(deepClone(final));
         // minus
         setCursorIndex((prev) => (prev === -1 ? -1 : prev - 1)); // changed from 0 ? 0
       } else {
@@ -543,6 +595,7 @@ export const MathEquationEditorOutput = () => {
     console.log("target arrau ", targetArray, lastIdx, splittedIndexes);
 
     if (selectedEditArea !== "") {
+      handleChange(deepClone(equation));
       // if (!Array.isArray(targetArray)) {
       if (lastIdx === "n") {
         // targetArray.value1.push({ ...buttonInfo, value1: [] });
@@ -553,6 +606,8 @@ export const MathEquationEditorOutput = () => {
 
         console.log("copy before setting", copy);
         setEquation(copy);
+        // handleChange(deepClone(copy));
+
         // plus
         setCursorIndex((prev) => prev + 1);
       } else if (lastIdx === "d") {
@@ -564,6 +619,8 @@ export const MathEquationEditorOutput = () => {
 
         console.log("copy before setting", copy);
         setEquation(copy);
+        // handleChange(deepClone(copy));
+
         // plus
         setCursorIndex((prev) => prev + 1);
       } else if (lastIdx === "v") {
@@ -576,6 +633,8 @@ export const MathEquationEditorOutput = () => {
 
           console.log("copy before setting", copy);
           setEquation(copy);
+          // handleChange(deepClone(copy));
+
           // plus
           setCursorIndex((prev) => prev + 1);
         } catch (error) {
@@ -591,6 +650,8 @@ export const MathEquationEditorOutput = () => {
 
             console.log("copy before setting", copy);
             setEquation(copy);
+            // handleChange(deepClone(copy));
+
             // plus
             setCursorIndex((prev) => prev + 1);
           } catch (error) {
@@ -598,6 +659,11 @@ export const MathEquationEditorOutput = () => {
           }
         } else {
           // setEquation((prev) => [...prev, { ...buttonInfo, value: [] }]);
+          let finalValue = [...equation];
+          finalValue.splice(cursorIndex + 1, 0, {
+            ...buttonInfo,
+            // value: [],
+          });
           setEquation((prev) => {
             console.log("3101");
             // return prev;
@@ -609,10 +675,10 @@ export const MathEquationEditorOutput = () => {
               // value: [],
             });
 
-            // console.log("equation uf 934", finalValue, ...buttonInfo);
-
             return finalValue;
           });
+
+          // handleChange(deepClone(finalValue));
 
           // plus
           setCursorIndex((prev) => prev + 1);
@@ -629,7 +695,6 @@ export const MathEquationEditorOutput = () => {
     if (buttonInfo.type === "simple") {
       const lastIdx =
         typeof nest === "object" ? nest[0] : Number(nest.split(",").pop());
-      console.log("inside simple ", buttonInfo, nest, lastIdx);
       return (
         <div className={classes["simple-container"]}>
           <p
@@ -650,7 +715,6 @@ export const MathEquationEditorOutput = () => {
     }
 
     if (buttonInfo.name === "Fraction") {
-      console.log("inside fraction ", nest);
       let editAreaIndex;
       let cursorPointerIndex;
       if (typeof nest === "object") {
@@ -690,8 +754,6 @@ export const MathEquationEditorOutput = () => {
               id={`${nest},n`}
               ref={editAreaRef}
               onClick={(e) => selectedEditAreaHandler(e, `${nest},n`)}
-              //   contentEditable={true}
-              //   onInput={(e) => handleChange(e, 0)}
             >
               {buttonInfo?.value1.map((value, index) => (
                 <div>
@@ -785,7 +847,6 @@ export const MathEquationEditorOutput = () => {
         let lastIndex = nest.lastIndexOf(",");
         editAreaIndex = nest.substring(0, lastIndex);
         console.log(" last index ", nest, cursorPointerIndex, editAreaIndex);
-        // editAreaIndex = 0;
       }
       return (
         <div
@@ -794,12 +855,11 @@ export const MathEquationEditorOutput = () => {
             cursorIndex === cursorPointerIndex
               ? classes["cursor"]
               : selectedEditArea === `${nest},n` &&
-                cursorIndex === cursorPointerIndex // && index === 0
+                cursorIndex === cursorPointerIndex
               ? classes["cursor-1"]
               : ""
           }`}
         >
-          {/* <div>&radic;</div> */}
           <span style={{ fontSize: "1.8rem" }}>&#8730;</span>
           <div
             className={`${
@@ -812,8 +872,6 @@ export const MathEquationEditorOutput = () => {
             id={`${nest},v`}
             ref={editAreaRef}
             onClick={(e) => selectedEditAreaHandler(e, `${nest},v`)}
-            //   contentEditable={true}
-            //   onInput={(e) => handleChange(e, 0)}
           >
             {buttonInfo?.value.map((value, index) => (
               <div>
@@ -1018,6 +1076,7 @@ export const MathEquationEditorOutput = () => {
               : ""
           }`}
         >
+          <span style={{ fontSize: "3rem" }}>&int;</span>
           <div
             className={`${
               buttonInfo?.value?.length > 0
@@ -1089,7 +1148,8 @@ export const MathEquationEditorOutput = () => {
               : ""
           }`}
         >
-          {[...Array(buttonInfo.row)].map((_, rowIndex) => (
+          {/* using flex */}
+          {/* {[...Array(buttonInfo.row)].map((_, rowIndex) => (
             <div className={classes["matrix-row"]}>
               {[...Array(buttonInfo.column)].map((_, columnIndex) => (
                 <div
@@ -1166,21 +1226,95 @@ export const MathEquationEditorOutput = () => {
                       buttonInfo.column * rowIndex + columnIndex
                     ]
                   )}
-                  {/* {buttonInfo.column * rowIndex + columnIndex} */}
                 </div>
               ))}
             </div>
-          ))}
+          ))} */}
+
+          <div
+            className={classes["matrix-cells-container"]}
+            style={{
+              display: "grid",
+              gridTemplateColumns: `repeat(${buttonInfo.column} , 1fr)`,
+              gridTemplateRows: `repeat(${buttonInfo.row} , 1fr)`,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {console.log(" matrix cells ", buttonInfo)}
+            {[...Array(buttonInfo.row * buttonInfo.column)].map(
+              (_, cellIndex) => (
+                <div className={classes["matrix-cell"]}>
+                  {/* {[...Array(buttonInfo.column)].map((_, columnIndex) => ( */}
+                  {(() => {
+                    console.log(
+                      "1250 before ",
+                      document.getElementById(`${nest},${cellIndex}`)
+                        ?.textContent
+                    );
+                    // let element = document.getElementById(
+                    //   `${nest},${cellIndex}`
+                    // );
+                    // if (element) {
+                    //   element.textContent = "";
+                    // }
+                  })()}
+                  <div
+                    className={`${classes["matrix-cell"]} ${
+                      buttonInfo?.value[cellIndex]?.length > 0
+                        ? classes["edit-area"]
+                        : classes["edit-area-empty"]
+                    }  ${
+                      selectedEditArea === `${nest},${cellIndex}` &&
+                      classes["selected-edit-area"]
+                    } `}
+                    id={`${nest},${cellIndex}`}
+                    ref={editAreaRef}
+                    onClick={(e) =>
+                      selectedEditAreaHandler(e, `${nest},${cellIndex}`)
+                    }
+                  >
+                    {/* {buttonInfo?.value[cellIndex]} */}
+                    {buttonInfo?.value[cellIndex].map((value, index) => (
+                      <div>
+                        {typeof value === "string" ? (
+                          value === " " ? (
+                            <span>&nbsp;</span>
+                          ) : (
+                            <p
+                              className={
+                                selectedEditArea === `${nest},${cellIndex}` &&
+                                cursorIndex === index
+                                  ? classes["cursor"]
+                                  : selectedEditArea ===
+                                      `${nest},${cellIndex}` &&
+                                    cursorIndex === -1 &&
+                                    index === 0
+                                  ? classes["cursor-1"]
+                                  : ""
+                              }
+                            >
+                              {value}
+                            </p>
+                          )
+                        ) : (
+                          <div>
+                            {renderComponent(
+                              value,
+                              `${nest},v,${cellIndex},${index}`
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  {/* ))} */}
+                </div>
+              )
+            )}
+          </div>
         </div>
       );
-    }
-
-    if (buttonInfo.name === "ω") {
-      return <div className={classes["simple-container"]}>ω</div>;
-    }
-
-    if (buttonInfo.name === "α") {
-      return <div className={classes["simple-container"]}>α</div>;
     }
   };
 
@@ -1188,7 +1322,6 @@ export const MathEquationEditorOutput = () => {
   const convertToLatex = (arr) => {
     let latex = "";
 
-    console.log("equation uf convertedToLatex", arr);
     if (!arr) {
       return "";
     }
@@ -1239,7 +1372,6 @@ export const MathEquationEditorOutput = () => {
           // Handle other types of objects here
         }
       } else {
-        console.log("equation uf convertedToLatex else ", item);
         latex += item;
       }
     });
@@ -1273,7 +1405,76 @@ export const MathEquationEditorOutput = () => {
     }
   };
 
+  // const downloadInWmfFile = async () => {
+  //   const latexEquation = convertToLatex(equation);
+  //   console.log("inside downloadInWmfFile ", latexEquation);
+  //   const formData = new FormData();
+  //   formData.append("file", latexEquation);
+
+  //   try {
+  //     const response = await fetch(
+  //       "http://localhost:3000/convert/blob-to-wmf",
+  //       {
+  //         method: "POST",
+  //         body: formData,
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to convert Latex to WMF");
+  //     }
+
+  //     const wmfBlob = await response.blob();
+  //     const url = URL.createObjectURL(wmfBlob);
+
+  //     // Create a link to download the WMF file
+  //     const a = document.createElement("a");
+  //     a.href = url;
+  //     a.download = "converted_equation.wmf";
+  //     document.body.appendChild(a);
+  //     a.click();
+  //     document.body.removeChild(a);
+  //   } catch (error) {
+  //     console.error("Error converting Latex to WMF:", error);
+  //   }
+  // };
+
   // modal close
+  const downloadInWmfFile = async () => {
+    const latexEquation = convertToLatex(equation); // Assuming this function converts the equation to LaTeX format
+    console.log("inside downloadInWmfFile ", latexEquation);
+
+    try {
+      const response = await fetch(
+        "http://localhost:3000/convert/latex-to-wmf",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Set the content type to JSON
+          },
+          body: JSON.stringify({ latexEquation }), // Send the LaTeX equation as JSON data
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to convert Latex to WMF");
+      }
+
+      const wmfBlob = await response.blob();
+      const url = URL.createObjectURL(wmfBlob);
+
+      // Create a link to download the WMF file
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "converted_equation.wmf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error converting Latex to WMF:", error);
+    }
+  };
+
   const hoverInfoModalCloseHandler = () => {
     setHoverDetailsModal(false);
   };
@@ -1357,6 +1558,7 @@ export const MathEquationEditorOutput = () => {
   };
 
   const saveAsWMF = () => {
+    downloadInWmfFile();
     renderEquation2();
     toPng(equationRef.current, { backgroundColor: "#fff" })
       .then((dataUrl) => {
@@ -1370,6 +1572,52 @@ export const MathEquationEditorOutput = () => {
       .catch((error) => {
         console.error("Error converting HTML to image:", error);
       });
+  };
+
+  const handleChange = (value, line) => {
+    console.log(" history changed inside handle change ", value, line);
+    // Update history with the new text
+    setHistory((prevHistory) => [...prevHistory, value]);
+
+    // Clear redo history whenever new text is entered
+    setRedoHistory([]);
+  };
+
+  const handleUndo = (equation, history) => {
+    if (history.length > 0) {
+      // Get the last text state from history
+      const lastTextState = history[history.length - 1];
+      const currentEquation = equation;
+      console.log("lastTextState ", lastTextState, history);
+      // setEquation([]);
+      // Set the text state to the last state
+      setEquation(lastTextState);
+
+      // Remove the last state from history
+      setHistory((prevHistory) => prevHistory.slice(0, -1));
+      // Add the current text to redo history
+      setRedoHistory((prevRedoHistory) => [
+        ...prevRedoHistory,
+        currentEquation,
+      ]);
+    } else {
+      setEquation([]);
+    }
+  };
+
+  const handleRedo = (equation, redoHistory) => {
+    if (redoHistory.length > 0) {
+      // Get the last text state from redo history
+      const nextTextState = redoHistory[redoHistory.length - 1];
+      const currentEquation = equation;
+      // Set the text state to the next state
+      setEquation(nextTextState);
+      //
+      // Remove the last state from redo history
+      setRedoHistory((prevRedoHistory) => prevRedoHistory.slice(0, -1));
+      // Add the current text to undo history
+      setHistory((prevUndoHistory) => [...prevUndoHistory, currentEquation]);
+    }
   };
 
   // Utility function to convert data URI to Blob
