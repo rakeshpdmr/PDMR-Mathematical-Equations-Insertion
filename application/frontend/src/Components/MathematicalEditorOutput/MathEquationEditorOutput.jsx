@@ -6,13 +6,18 @@ import HoverDetailsModal from "../UI/Modal/HoverDetailsModal/HoverDetailsModal";
 import MatrixInputModal from "../UI/Modal/MatrixInputModal/MatrixInputModal";
 import SearchModal from "../UI/Modal/SearchModal/SearchModal";
 import searchIcon from "../../Assets/search.png";
+import fractionIcon from "../../Assets/buttonImages/fraction.png";
+import integralIcon from "../../Assets/buttonImages/integral.png";
+import oversetIcon from "../../Assets/buttonImages/overset.png";
+import oversetUndersetIcon from "../../Assets/buttonImages/overset-underset.png";
+import undersetIcon from "../../Assets/buttonImages/underset.png";
+import squareRootIcon from "../../Assets/buttonImages/squareroot.png";
+import subscriptIcon from "../../Assets/buttonImages/subscript.png";
+import superscriptIcon from "../../Assets/buttonImages/superscript.png";
+import matrixIcon from "../../Assets/buttonImages/matrix.png";
+
 import cloudDownloadIcon from "../../Assets/cloud-download.png";
 import katex from "katex";
-// import canvg from "canvg";
-// import { default as canvg } from "canvg";
-import { Canvg } from "canvg";
-import WMF from "wmf";
-// import wmfjs from "wmf-js";
 import buttonInfos from "../Infos/buttonInfos.json";
 
 export const MathEquationEditorOutput = () => {
@@ -22,6 +27,18 @@ export const MathEquationEditorOutput = () => {
   const [matrixInputModal, setMatrixInputModal] = useState(false);
 
   const [hoverButtonInfo, setHoverButtonInfo] = useState({});
+
+  const buttonImages = {
+    fractionIcon,
+    integralIcon,
+    oversetIcon,
+    oversetUndersetIcon,
+    undersetIcon,
+    squareRootIcon,
+    subscriptIcon,
+    superscriptIcon,
+    matrixIcon,
+  };
 
   const tabs = [
     {
@@ -78,10 +95,6 @@ export const MathEquationEditorOutput = () => {
 
   // console Use Effects
   useEffect(() => {
-    console.log("panelButtons", panelButtons);
-  }, [panelButtons]);
-
-  useEffect(() => {
     console.log(" cursor lengthOfSelectedArea ", lengthOfSelectedArea);
     console.log(" cursor cursor index ", cursorIndex);
     console.log("cursor selectedEditArea ", selectedEditArea);
@@ -112,6 +125,12 @@ export const MathEquationEditorOutput = () => {
     } else if (lastIdx === "v") {
       setLengthOfSelectedArea(targetArray?.value?.length);
       setCursorIndex(targetArray?.value?.length - 1);
+    } else if (lastIdx === "ov") {
+      setLengthOfSelectedArea(targetArray?.value1?.length);
+      setCursorIndex(targetArray?.value1?.length - 1);
+    } else if (lastIdx === "uv") {
+      setLengthOfSelectedArea(targetArray?.value2?.length);
+      setCursorIndex(targetArray?.value2?.length - 1);
     } else {
       if (targetArray.name === "Matrix") {
         setLengthOfSelectedArea(targetArray?.value[lastIdx]?.length);
@@ -386,6 +405,50 @@ export const MathEquationEditorOutput = () => {
         console.log("copy before setting");
         setEquation(copy);
         // handleChange(deepClone(copy));
+      } else if (lastIdx === "ov") {
+        if (value === "Backspace") {
+          // targetArray?.value?.pop();
+          targetArray?.value1?.splice(cursorIndex, 1);
+          // minus
+          setCursorIndex((prev) => (prev === -1 ? -1 : prev - 1)); // changed from 0 ? 0
+        } else {
+          // targetArray.value = [
+          //   ...targetArray.value,
+          //   Array.isArray(value) ? [...value] : value,
+          // ];
+          targetArray.value1.splice(
+            cursorIndex + 1,
+            0,
+            Array.isArray(value) ? [...value] : value
+          );
+          // plus
+          setCursorIndex((prev) => prev + 1);
+        }
+        console.log("copy before setting");
+        setEquation(copy);
+        // handleChange(deepClone(copy));
+      } else if (lastIdx === "uv") {
+        if (value === "Backspace") {
+          // targetArray?.value?.pop();
+          targetArray?.value2?.splice(cursorIndex, 1);
+          // minus
+          setCursorIndex((prev) => (prev === -1 ? -1 : prev - 1)); // changed from 0 ? 0
+        } else {
+          // targetArray.value = [
+          //   ...targetArray.value,
+          //   Array.isArray(value) ? [...value] : value,
+          // ];
+          targetArray.value2.splice(
+            cursorIndex + 1,
+            0,
+            Array.isArray(value) ? [...value] : value
+          );
+          // plus
+          setCursorIndex((prev) => prev + 1);
+        }
+        console.log("copy before setting");
+        setEquation(copy);
+        // handleChange(deepClone(copy));
       } else {
         if (value === "Backspace") {
           // targetArray?.value?.pop();
@@ -586,7 +649,8 @@ export const MathEquationEditorOutput = () => {
     const lastIdx = splittedIndexes.pop();
     const targetArray = getValueAtIndex(copy, splittedIndexes);
     console.log(
-      " inside updateValueAtIndex target array 101",
+      " inside updateValueAtIndex target array 101 ",
+      selectedEditArea,
       buttonInfo,
       splittedIndexes,
       targetArray,
@@ -627,6 +691,40 @@ export const MathEquationEditorOutput = () => {
         try {
           // targetArray.value.push({ ...buttonInfo, value: [] });
           targetArray.value.splice(cursorIndex + 1, 0, {
+            ...buttonInfo,
+            value: [],
+          });
+
+          console.log("copy before setting", copy);
+          setEquation(copy);
+          // handleChange(deepClone(copy));
+
+          // plus
+          setCursorIndex((prev) => prev + 1);
+        } catch (error) {
+          console.log("error was ", error);
+        }
+      } else if (lastIdx === "ov") {
+        try {
+          // targetArray.value.push({ ...buttonInfo, value: [] });
+          targetArray.value1.splice(cursorIndex + 1, 0, {
+            ...buttonInfo,
+            value: [],
+          });
+
+          console.log("copy before setting", copy);
+          setEquation(copy);
+          // handleChange(deepClone(copy));
+
+          // plus
+          setCursorIndex((prev) => prev + 1);
+        } catch (error) {
+          console.log("error was ", error);
+        }
+      } else if (lastIdx === "uv") {
+        try {
+          // targetArray.value.push({ ...buttonInfo, value: [] });
+          targetArray.value2.splice(cursorIndex + 1, 0, {
             ...buttonInfo,
             value: [],
           });
@@ -825,6 +923,399 @@ export const MathEquationEditorOutput = () => {
                     )
                   ) : (
                     <div>{renderComponent(value, `${nest},d,${index}`)}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (buttonInfo.name === "Overset") {
+      let editAreaIndex;
+      let cursorPointerIndex;
+      if (typeof nest === "object") {
+        editAreaIndex = "0";
+        cursorPointerIndex = nest[0];
+      } else {
+        cursorPointerIndex = Number(
+          nest.split(",")[nest.split(",").length - 1]
+        );
+        let lastIndex = nest.lastIndexOf(",");
+        editAreaIndex = nest.substring(0, lastIndex);
+        console.log(" last index ", nest, cursorPointerIndex, editAreaIndex);
+        // editAreaIndex = 0;
+      }
+      return (
+        <div
+          className={`${classes["fraction-container"]} ${
+            selectedEditArea === editAreaIndex &&
+            cursorIndex === cursorPointerIndex
+              ? classes["cursor"]
+              : selectedEditArea === editAreaIndex &&
+                cursorIndex === cursorPointerIndex // && index === 0
+              ? classes["cursor-1"]
+              : ""
+          } `}
+        >
+          <div className={classes["overset-container"]}>
+            <div
+              className={`${
+                buttonInfo?.value1?.length > 0
+                  ? classes["edit-area"]
+                  : classes["edit-area-empty"]
+              }  ${
+                selectedEditArea === `${nest},ov` &&
+                classes["selected-edit-area"]
+              } `}
+              id={`${nest},ov`}
+              ref={editAreaRef}
+              onClick={(e) => selectedEditAreaHandler(e, `${nest},ov`)}
+            >
+              {buttonInfo?.value1.map((value, index) => (
+                <div>
+                  {typeof value === "string" ? (
+                    value === " " ? (
+                      <span>&nbsp;</span>
+                    ) : (
+                      <p
+                        className={
+                          selectedEditArea === `${nest},ov` &&
+                          cursorIndex === index
+                            ? classes["cursor"]
+                            : selectedEditArea === `${nest},ov` &&
+                              cursorIndex === -1 &&
+                              index === 0
+                            ? classes["cursor-1"]
+                            : ""
+                        }
+                      >
+                        {value}
+                      </p>
+                    )
+                  ) : (
+                    <div>{renderComponent(value, `${nest},ov,${index}`)}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className={classes["fraction-denominator"]}>
+            <div
+              className={`
+              ${
+                buttonInfo?.value?.length > 0
+                  ? classes["edit-area"]
+                  : classes["edit-area-empty"]
+              } 
+               ${
+                 selectedEditArea === `${nest},v` &&
+                 classes["selected-edit-area"]
+               } `}
+              id={`${nest},v`}
+              ref={editAreaRef}
+              onClick={(e) => selectedEditAreaHandler(e, `${nest},v`)}
+            >
+              {buttonInfo?.value.map((value, index) => (
+                <div>
+                  {typeof value === "string" ? (
+                    value === " " ? (
+                      <span>&nbsp;</span>
+                    ) : (
+                      <p
+                        className={
+                          selectedEditArea === `${nest},v` &&
+                          cursorIndex === index
+                            ? classes["cursor"]
+                            : selectedEditArea === `${nest},v` &&
+                              cursorIndex === -1 &&
+                              index === 0
+                            ? classes["cursor-1"]
+                            : ""
+                        }
+                      >
+                        {value}
+                      </p>
+                    )
+                  ) : (
+                    <div>{renderComponent(value, `${nest},v,${index}`)}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (buttonInfo.name === "Overset and Underset") {
+      let editAreaIndex;
+      let cursorPointerIndex;
+      if (typeof nest === "object") {
+        editAreaIndex = "0";
+        cursorPointerIndex = nest[0];
+      } else {
+        cursorPointerIndex = Number(
+          nest.split(",")[nest.split(",").length - 1]
+        );
+        let lastIndex = nest.lastIndexOf(",");
+        editAreaIndex = nest.substring(0, lastIndex);
+        console.log(" last index ", nest, cursorPointerIndex, editAreaIndex);
+        // editAreaIndex = 0;
+      }
+      return (
+        <div
+          className={`${classes["fraction-container"]} ${
+            selectedEditArea === editAreaIndex &&
+            cursorIndex === cursorPointerIndex
+              ? classes["cursor"]
+              : selectedEditArea === editAreaIndex &&
+                cursorIndex === cursorPointerIndex // && index === 0
+              ? classes["cursor-1"]
+              : ""
+          } `}
+        >
+          <div className={classes["overset-container"]}>
+            <div
+              className={`${
+                buttonInfo?.value1?.length > 0
+                  ? classes["edit-area"]
+                  : classes["edit-area-empty"]
+              }  ${
+                selectedEditArea === `${nest},ov` &&
+                classes["selected-edit-area"]
+              } `}
+              id={`${nest},ov`}
+              ref={editAreaRef}
+              onClick={(e) => selectedEditAreaHandler(e, `${nest},ov`)}
+            >
+              {buttonInfo?.value1.map((value, index) => (
+                <div>
+                  {typeof value === "string" ? (
+                    value === " " ? (
+                      <span>&nbsp;</span>
+                    ) : (
+                      <p
+                        className={
+                          selectedEditArea === `${nest},ov` &&
+                          cursorIndex === index
+                            ? classes["cursor"]
+                            : selectedEditArea === `${nest},ov` &&
+                              cursorIndex === -1 &&
+                              index === 0
+                            ? classes["cursor-1"]
+                            : ""
+                        }
+                      >
+                        {value}
+                      </p>
+                    )
+                  ) : (
+                    <div>{renderComponent(value, `${nest},ov,${index}`)}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className={classes["fraction-denominator"]}>
+            <div
+              className={`
+              ${
+                buttonInfo?.value?.length > 0
+                  ? classes["edit-area"]
+                  : classes["edit-area-empty"]
+              } 
+               ${
+                 selectedEditArea === `${nest},v` &&
+                 classes["selected-edit-area"]
+               } `}
+              id={`${nest},v`}
+              ref={editAreaRef}
+              onClick={(e) => selectedEditAreaHandler(e, `${nest},v`)}
+            >
+              {buttonInfo?.value.map((value, index) => (
+                <div>
+                  {typeof value === "string" ? (
+                    value === " " ? (
+                      <span>&nbsp;</span>
+                    ) : (
+                      <p
+                        className={
+                          selectedEditArea === `${nest},v` &&
+                          cursorIndex === index
+                            ? classes["cursor"]
+                            : selectedEditArea === `${nest},v` &&
+                              cursorIndex === -1 &&
+                              index === 0
+                            ? classes["cursor-1"]
+                            : ""
+                        }
+                      >
+                        {value}
+                      </p>
+                    )
+                  ) : (
+                    <div>{renderComponent(value, `${nest},v,${index}`)}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className={classes["underset-container"]}>
+            <div
+              className={`${
+                buttonInfo?.value2?.length > 0
+                  ? classes["edit-area"]
+                  : classes["edit-area-empty"]
+              }  ${
+                selectedEditArea === `${nest},uv` &&
+                classes["selected-edit-area"]
+              } `}
+              id={`${nest},uv`}
+              ref={editAreaRef}
+              onClick={(e) => selectedEditAreaHandler(e, `${nest},uv`)}
+            >
+              {buttonInfo?.value2.map((value, index) => (
+                <div>
+                  {typeof value === "string" ? (
+                    value === " " ? (
+                      <span>&nbsp;</span>
+                    ) : (
+                      <p
+                        className={
+                          selectedEditArea === `${nest},uv` &&
+                          cursorIndex === index
+                            ? classes["cursor"]
+                            : selectedEditArea === `${nest},uv` &&
+                              cursorIndex === -1 &&
+                              index === 0
+                            ? classes["cursor-1"]
+                            : ""
+                        }
+                      >
+                        {value}
+                      </p>
+                    )
+                  ) : (
+                    <div>{renderComponent(value, `${nest},uv,${index}`)}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (buttonInfo.name === "Underset") {
+      let editAreaIndex;
+      let cursorPointerIndex;
+      if (typeof nest === "object") {
+        editAreaIndex = "0";
+        cursorPointerIndex = nest[0];
+      } else {
+        cursorPointerIndex = Number(
+          nest.split(",")[nest.split(",").length - 1]
+        );
+        let lastIndex = nest.lastIndexOf(",");
+        editAreaIndex = nest.substring(0, lastIndex);
+        console.log(" last index ", nest, cursorPointerIndex, editAreaIndex);
+        // editAreaIndex = 0;
+      }
+      return (
+        <div
+          className={`${classes["fraction-container"]} ${
+            selectedEditArea === editAreaIndex &&
+            cursorIndex === cursorPointerIndex
+              ? classes["cursor"]
+              : selectedEditArea === editAreaIndex &&
+                cursorIndex === cursorPointerIndex // && index === 0
+              ? classes["cursor-1"]
+              : ""
+          } `}
+        >
+          <div className={classes["fraction-denominator"]}>
+            <div
+              className={`
+              ${
+                buttonInfo?.value?.length > 0
+                  ? classes["edit-area"]
+                  : classes["edit-area-empty"]
+              } 
+               ${
+                 selectedEditArea === `${nest},v` &&
+                 classes["selected-edit-area"]
+               } `}
+              id={`${nest},v`}
+              ref={editAreaRef}
+              onClick={(e) => selectedEditAreaHandler(e, `${nest},v`)}
+            >
+              {buttonInfo?.value.map((value, index) => (
+                <div>
+                  {typeof value === "string" ? (
+                    value === " " ? (
+                      <span>&nbsp;</span>
+                    ) : (
+                      <p
+                        className={
+                          selectedEditArea === `${nest},v` &&
+                          cursorIndex === index
+                            ? classes["cursor"]
+                            : selectedEditArea === `${nest},v` &&
+                              cursorIndex === -1 &&
+                              index === 0
+                            ? classes["cursor-1"]
+                            : ""
+                        }
+                      >
+                        {value}
+                      </p>
+                    )
+                  ) : (
+                    <div>{renderComponent(value, `${nest},v,${index}`)}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className={classes["underset-container"]}>
+            <div
+              className={`${
+                buttonInfo?.value2?.length > 0
+                  ? classes["edit-area"]
+                  : classes["edit-area-empty"]
+              }  ${
+                selectedEditArea === `${nest},uv` &&
+                classes["selected-edit-area"]
+              } `}
+              id={`${nest},uv`}
+              ref={editAreaRef}
+              onClick={(e) => selectedEditAreaHandler(e, `${nest},uv`)}
+            >
+              {buttonInfo?.value2.map((value, index) => (
+                <div>
+                  {typeof value === "string" ? (
+                    value === " " ? (
+                      <span>&nbsp;</span>
+                    ) : (
+                      <p
+                        className={
+                          selectedEditArea === `${nest},uv` &&
+                          cursorIndex === index
+                            ? classes["cursor"]
+                            : selectedEditArea === `${nest},uv` &&
+                              cursorIndex === -1 &&
+                              index === 0
+                            ? classes["cursor-1"]
+                            : ""
+                        }
+                      >
+                        {value}
+                      </p>
+                    )
+                  ) : (
+                    <div>{renderComponent(value, `${nest},uv,${index}`)}</div>
                   )}
                 </div>
               ))}
@@ -1341,6 +1832,29 @@ export const MathEquationEditorOutput = () => {
           latex += `\\frac{${convertToLatex(item.value1)}}{${convertToLatex(
             item.value2
           )}}`;
+        } else if (item.name === "Overset") {
+          latex += `\\overset{${convertToLatex(item.value1)}}{{${convertToLatex(
+            item.value
+          )}}}`;
+          // latex += `\\frac{${convertToLatex(item.value1)}}{${convertToLatex(
+          //   item.value2
+          // )}}`;
+        } else if (item.name === "Overset and Underset") {
+          latex += `\\overset{${convertToLatex(
+            item.value1
+          )}} {\\underset {${convertToLatex(item.value2)}}  {${convertToLatex(
+            item.value
+          )}}}`;
+          // latex += `\\frac{${convertToLatex(item.value1)}}{${convertToLatex(
+          //   item.value2
+          // )}}`;
+        } else if (item.name === "Underset") {
+          latex += `\\underset {${convertToLatex(
+            item.value2
+          )}}  {{${convertToLatex(item.value)}}}`;
+          // latex += `\\frac{${convertToLatex(item.value1)}}{${convertToLatex(
+          //   item.value2
+          // )}}`;
         } else if (item.name === "Square Root") {
           latex += `\\sqrt{${convertToLatex(item.value)}}`;
         } else if (item.name === "Superscript") {
@@ -1350,7 +1864,6 @@ export const MathEquationEditorOutput = () => {
         } else if (item.name === "Integral") {
           latex += `\\int{${convertToLatex(item.value)}}`;
         } else if (item.name === "Matrix") {
-          console.log("3710 ", item);
           let matrixLatexValue = `\\begin{pmatrix}`;
           for (let i = 0; i < item.row; i++) {
             for (let j = 0; j < item.column; j++) {
@@ -1491,11 +2004,11 @@ export const MathEquationEditorOutput = () => {
     e.preventDefault();
     console.log(
       "inside matrixInputsSubmitHandler ",
-      buttonInfos.mathConstructs[5],
+      buttonInfos.mathConstructs[8],
       rowsCount,
       columnsCount
     );
-    panelButtonClicked(buttonInfos.mathConstructs[5], rowsCount, columnsCount);
+    panelButtonClicked(buttonInfos.mathConstructs[8], rowsCount, columnsCount);
     setMatrixInputModal(false);
   };
 
@@ -1695,7 +2208,16 @@ export const MathEquationEditorOutput = () => {
               }}
               className={`panel-button-ref ${classes["panel-button"]}`}
             >
-              {buttonInfo.name}
+              {console.log("  buttonInfo.image ", buttonInfo.image, buttonInfo)}
+              {buttonInfo.image ? (
+                <img
+                  src={buttonImages[buttonInfo.image]}
+                  width="20px"
+                  height="20px"
+                ></img>
+              ) : (
+                buttonInfo.name
+              )}
             </button>
           ))}
         </div>
@@ -1775,7 +2297,12 @@ export const MathEquationEditorOutput = () => {
         }
       </div>
 
-      {hoverDetailsModal && <HoverDetailsModal buttonInfo={hoverButtonInfo} />}
+      {hoverDetailsModal && (
+        <HoverDetailsModal
+          buttonInfo={hoverButtonInfo}
+          buttonImages={buttonImages}
+        />
+      )}
       {searchModal && (
         <SearchModal
           closeSearchModal={searchModalCloseHandler}

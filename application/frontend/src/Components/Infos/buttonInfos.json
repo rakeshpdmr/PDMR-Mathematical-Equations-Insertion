@@ -1,18 +1,11 @@
 {
   "mathConstructs": [
     {
-      "name": "Fraction",
-      "label": "Fraction",
-      "latexFormat": "\\frac{}{}",
-      "value1": [],
-      "value2": [],
-      "type": "complex"
-    },
-    {
       "name": "Square Root",
       "label": "Square Root",
       "latexFormat": "\\sqrt{}",
       "value": [],
+      "image": "squareRootIcon",
       "type": "complex"
     },
     {
@@ -20,6 +13,7 @@
       "label": "Superscript",
       "latexFormat": "^{}",
       "value": [],
+      "image": "superscriptIcon",
       "type": "complex"
     },
     {
@@ -27,6 +21,7 @@
       "label": "Subscript",
       "latexFormat": "_{}",
       "value": [],
+      "image": "subscriptIcon",
       "type": "complex"
     },
     {
@@ -34,6 +29,45 @@
       "label": "Integral",
       "latexFormat": "\\int{}",
       "value": [],
+      "image": "integralIcon",
+      "type": "complex"
+    },
+    {
+      "name": "Fraction",
+      "label": "Fraction",
+      "latexFormat": "\\frac{}{}",
+      "value1": [],
+      "value2": [],
+      "image": "fractionIcon",
+      "type": "complex"
+    },
+    {
+      "name": "Overset",
+      "label": "Overset",
+      "latexFormat": "\\overset{}{}",
+      "value1": [],
+      "value": [],
+      "image": "oversetIcon",
+      "type": "complex"
+    },
+    {
+      "name": "Overset and Underset",
+      "label": "Overset and Underset",
+      "latexFormat": "\\overset{}{\\underset{}{}}",
+      "value1": [],
+      "value": [],
+      "value2": [],
+      "image": "oversetUndersetIcon",
+      "type": "complex"
+    },
+    {
+      "name": "Underset",
+      "label": "Underset",
+      "latexFormat": "\\underset{}{}",
+      "value1": [],
+      "value": [],
+      "value2": [],
+      "image": "undersetIcon",
       "type": "complex"
     },
     {
@@ -43,6 +77,7 @@
       "column": 2,
       "latexFormat": "\\begin{pmatrix}  &  \\  &  \\ end{pmatrix}",
       "value": [],
+      "image": "matrixIcon",
       "type": "complex"
     }
   ],
@@ -173,6 +208,7 @@
       "value": [],
       "type": "simple"
     },
+
     {
       "name": "τ",
       "label": "tau",
@@ -310,6 +346,13 @@
       "name": "Σ",
       "label": "Sigma",
       "latexFormat": "\\Sigma",
+      "value": [],
+      "type": "simple"
+    },
+    {
+      "name": "∑",
+      "label": "Sum",
+      "latexFormat": "\\sum",
       "value": [],
       "type": "simple"
     },
@@ -2949,6 +2992,13 @@
       "type": "simple"
     },
     {
+      "name": "∑",
+      "label": "Sum",
+      "latexFormat": "\\sum",
+      "value": [],
+      "type": "simple"
+    },
+    {
       "name": "ג",
       "label": "gimel",
       "latexFormat": "\\gimel",
@@ -2960,6 +3010,32 @@
       "label": "Fraction",
       "latexFormat": "\\frac{}{}",
       "value1": [],
+      "value2": [],
+      "type": "complex"
+    },
+    {
+      "name": "Overset",
+      "label": "Overset",
+      "latexFormat": "\\overset{}{}",
+      "value1": [],
+      "value": [],
+      "type": "complex"
+    },
+    {
+      "name": "Overset and Underset",
+      "label": "Overset and Underset",
+      "latexFormat": "\\overset{}{\\underset{}{}}",
+      "value1": [],
+      "value": [],
+      "value2": [],
+      "type": "complex"
+    },
+    {
+      "name": "Underset",
+      "label": "Underset",
+      "latexFormat": "\\underset{}{}",
+      "value1": [],
+      "value": [],
       "value2": [],
       "type": "complex"
     },

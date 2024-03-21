@@ -316,21 +316,12 @@
 
 .superscript-container {
   position: relative;
-
   top: -10px;
-  /* left: -10px; */
-  /* display: flex;
-  align-items: start;
-  height: 50%; */
 }
 
 .subscript-container {
   position: relative;
   top: 10px;
-  /* left: -10px; */
-  /* display: flex;
-  align-items: start;
-  height: 50%; */
 }
 
 .subscript-container .edit-area {
@@ -397,6 +388,28 @@
 /* border-right: 1px solid #555; */
 /* background-color: #778da9; */
 /* }  */
+
+.overset-container .edit-area {
+  font-size: 1.2rem;
+  min-width: 10px;
+  min-height: 10px;
+}
+
+.overset-container .edit-area-empty {
+  min-width: 10px;
+  min-height: 10px;
+}
+
+.underset-container .edit-area {
+  font-size: 1.2rem;
+  min-width: 10px;
+  min-height: 10px;
+}
+
+.underset-container .edit-area-empty {
+  min-width: 10px;
+  min-height: 10px;
+}
 
 @keyframes blink {
   0% {

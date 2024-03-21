@@ -65,12 +65,12 @@ const MatrixInputModal = (props) => {
             type={"button"}
             onClick={(e) => {
               if (rowsCount > 0 && columnsCount > 0) {
-                console.log("props are ", props);
                 props.matrixSubmitHandler(e, rowsCount, columnsCount);
               } else {
                 alert("Rows and columns count should be atleast one");
               }
             }}
+            className={classes["submit-button"]}
           >
             Submit
           </Button>
