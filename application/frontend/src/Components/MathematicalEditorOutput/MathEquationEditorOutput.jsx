@@ -1446,7 +1446,7 @@ export const MathEquationEditorOutput = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/convert/latex-to-wmf",
+        "http://localhost:8000/convert/latex-to-wmf",
         {
           method: "POST",
           headers: {
@@ -1466,7 +1466,7 @@ export const MathEquationEditorOutput = () => {
       // Create a link to download the WMF file
       const a = document.createElement("a");
       a.href = url;
-      a.download = "converted_equation.wmf";
+      a.download = "equation.wmf";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

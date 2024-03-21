@@ -5,9 +5,10 @@
   align-items: center;
   margin: 2rem 5rem;
   width: 50rem;
-  padding: 2rem;
+  /* padding: 2rem; */
   background-color: #1b263b;
   color: #1b263b;
+  /* color: red; */
   font-size: 16px;
 }
 
