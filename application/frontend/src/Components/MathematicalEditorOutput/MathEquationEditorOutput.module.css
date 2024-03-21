@@ -430,5 +430,5 @@
 
 .cursor-1 {
   border-left: 1px solid #ccc; /* Initial border style */
-  animation: blink 1s infinite; /* Apply animation */
+  animation: blink 1s infinite; /* Apply animations */
 }
