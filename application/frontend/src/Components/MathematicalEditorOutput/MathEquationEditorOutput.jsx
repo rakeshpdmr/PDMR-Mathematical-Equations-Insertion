@@ -15,6 +15,7 @@ import squareRootIcon from "../../Assets/buttonImages/squareroot.png";
 import subscriptIcon from "../../Assets/buttonImages/subscript.png";
 import superscriptIcon from "../../Assets/buttonImages/superscript.png";
 import matrixIcon from "../../Assets/buttonImages/matrix.png";
+import pmatrixIcon from "../../Assets/buttonImages/pmatrix.png";
 
 import cloudDownloadIcon from "../../Assets/cloud-download.png";
 import katex from "katex";
@@ -38,6 +39,7 @@ export const MathEquationEditorOutput = () => {
     subscriptIcon,
     superscriptIcon,
     matrixIcon,
+    pmatrixIcon,
   };
 
   const tabs = [
@@ -84,6 +86,7 @@ export const MathEquationEditorOutput = () => {
   const [selectedEditArea, setSelectedEditArea] = useState("0");
   const [tabSelected, setTabSelected] = useState("mathConstructs");
   const [panelButtons, setPanelButtons] = useState(mathConstructs);
+  const [clickedPanelButton, setClickedPanelButton] = useState("");
   const [equation, setEquation] = useState([]);
   const editAreaRef = useRef(null);
   const [lengthOfSelectedArea, setLengthOfSelectedArea] = useState(0);
@@ -133,6 +136,9 @@ export const MathEquationEditorOutput = () => {
       setCursorIndex(targetArray?.value2?.length - 1);
     } else {
       if (targetArray.name === "Matrix") {
+        setLengthOfSelectedArea(targetArray?.value[lastIdx]?.length);
+        setCursorIndex(targetArray?.value[lastIdx]?.length - 1);
+      } else if (targetArray.name === "Vector Matrix") {
         setLengthOfSelectedArea(targetArray?.value[lastIdx]?.length);
         setCursorIndex(targetArray?.value[lastIdx]?.length - 1);
       } else {
@@ -622,14 +628,19 @@ export const MathEquationEditorOutput = () => {
     if (selectedEditArea === "") {
       return;
     }
+    setClickedPanelButton(buttonInfo.name);
     if (
-      buttonInfo.name === "Matrix" &&
+      (buttonInfo.name === "Matrix" || buttonInfo.name === "Vector Matrix") &&
       rowsCount === undefined &&
       columnsCount === undefined
     ) {
       setMatrixInputModal(true);
       return;
-    } else if (buttonInfo.name === "Matrix" && rowsCount && columnsCount) {
+    } else if (
+      (buttonInfo.name === "Matrix" || buttonInfo.name === "Vector Matrix") &&
+      rowsCount &&
+      columnsCount
+    ) {
       console.log(
         " inside panel button clicked  matrix ",
         buttonInfo,
@@ -739,7 +750,10 @@ export const MathEquationEditorOutput = () => {
           console.log("error was ", error);
         }
       } else {
-        if (targetArray.name === "Matrix") {
+        if (
+          targetArray.name === "Matrix" ||
+          targetArray.name === "Vector Matrix"
+        ) {
           try {
             targetArray.value[lastIdx]?.splice(cursorIndex + 1, 0, {
               ...buttonInfo,
@@ -1807,6 +1821,203 @@ export const MathEquationEditorOutput = () => {
         </div>
       );
     }
+
+    if (buttonInfo.name === "Vector Matrix") {
+      let editAreaIndex;
+      let cursorPointerIndex;
+      if (typeof nest === "object") {
+        editAreaIndex = "0";
+        cursorPointerIndex = nest[0];
+      } else {
+        cursorPointerIndex = Number(
+          nest.split(",")[nest.split(",").length - 1]
+        );
+        let lastIndex = nest.lastIndexOf(",");
+        editAreaIndex = nest.substring(0, lastIndex);
+        console.log(" last index ", nest, cursorPointerIndex, editAreaIndex);
+        // editAreaIndex = 0;
+      }
+      return (
+        <div
+          className={` ${classes["matrix-container"]}  ${
+            selectedEditArea === editAreaIndex &&
+            cursorIndex === cursorPointerIndex
+              ? classes["cursor"]
+              : selectedEditArea === editAreaIndex &&
+                cursorIndex === -1 &&
+                cursorPointerIndex === 0
+              ? classes["cursor-1"]
+              : ""
+          }`}
+        >
+          {/* using flex */}
+          {/* {[...Array(buttonInfo.row)].map((_, rowIndex) => (
+            <div className={classes["matrix-row"]}>
+              {[...Array(buttonInfo.column)].map((_, columnIndex) => (
+                <div
+                  className={`${classes["matrix-column"]} ${
+                    buttonInfo?.value[
+                      buttonInfo.column * rowIndex + columnIndex
+                    ]?.length > 0
+                      ? classes["edit-area"]
+                      : classes["edit-area-empty"]
+                  }  ${
+                    selectedEditArea ===
+                      `${nest},${buttonInfo.column * rowIndex + columnIndex}` &&
+                    classes["selected-edit-area"]
+                  } `}
+                  id={`${nest},${buttonInfo.column * rowIndex + columnIndex}`}
+                  ref={editAreaRef}
+                  onClick={(e) =>
+                    selectedEditAreaHandler(
+                      e,
+                      `${nest},${buttonInfo.column * rowIndex + columnIndex}`
+                    )
+                  }
+                >
+                  {
+                    buttonInfo?.value[
+                      buttonInfo.column * rowIndex + columnIndex
+                    ]
+                  }
+                  {buttonInfo?.value[
+                    buttonInfo.column * rowIndex + columnIndex
+                  ].map((value, index) => (
+                    <div>
+                      {console.log("matrix value", value, buttonInfo)}
+
+                      {typeof value === "string" ? (
+                        value === " " ? (
+                          <span>&nbsp;</span>
+                        ) : (
+                          <p
+                            className={
+                              selectedEditArea ===
+                                `${nest},${
+                                  buttonInfo.column * rowIndex + columnIndex
+                                }` && cursorIndex === index
+                                ? classes["cursor"]
+                                : selectedEditArea ===
+                                    `${nest},${
+                                      buttonInfo.column * rowIndex + columnIndex
+                                    }` &&
+                                  cursorIndex === -1 &&
+                                  index === 0
+                                ? classes["cursor-1"]
+                                : ""
+                            }
+                          >
+                            {value}
+                          </p>
+                        )
+                      ) : (
+                        <div>
+                          {renderComponent(
+                            value,
+                            `${nest},v,${
+                              buttonInfo.column * rowIndex + columnIndex
+                            },${index}`
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {console.log(
+                    "buttonInfo?.value[ buttonInfo.column * rowIndex + columnIndex ]",
+                    buttonInfo?.value[
+                      buttonInfo.column * rowIndex + columnIndex
+                    ]
+                  )}
+                </div>
+              ))}
+            </div>
+          ))} */}
+
+          <div
+            className={classes["matrix-cells-container"]}
+            style={{
+              display: "grid",
+              gridTemplateColumns: `repeat(${buttonInfo.column} , 1fr)`,
+              gridTemplateRows: `repeat(${buttonInfo.row} , 1fr)`,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {console.log(" matrix cells ", buttonInfo)}
+            {[...Array(buttonInfo.row * buttonInfo.column)].map(
+              (_, cellIndex) => (
+                <div className={classes["matrix-cell"]}>
+                  {/* {[...Array(buttonInfo.column)].map((_, columnIndex) => ( */}
+                  {(() => {
+                    console.log(
+                      "1250 before ",
+                      document.getElementById(`${nest},${cellIndex}`)
+                        ?.textContent
+                    );
+                    // let element = document.getElementById(
+                    //   `${nest},${cellIndex}`
+                    // );
+                    // if (element) {
+                    //   element.textContent = "";
+                    // }
+                  })()}
+                  <div
+                    className={`${classes["matrix-cell"]} ${
+                      buttonInfo?.value[cellIndex]?.length > 0
+                        ? classes["edit-area"]
+                        : classes["edit-area-empty"]
+                    }  ${
+                      selectedEditArea === `${nest},${cellIndex}` &&
+                      classes["selected-edit-area"]
+                    } `}
+                    id={`${nest},${cellIndex}`}
+                    ref={editAreaRef}
+                    onClick={(e) =>
+                      selectedEditAreaHandler(e, `${nest},${cellIndex}`)
+                    }
+                  >
+                    {/* {buttonInfo?.value[cellIndex]} */}
+                    {buttonInfo?.value[cellIndex].map((value, index) => (
+                      <div>
+                        {typeof value === "string" ? (
+                          value === " " ? (
+                            <span>&nbsp;</span>
+                          ) : (
+                            <p
+                              className={
+                                selectedEditArea === `${nest},${cellIndex}` &&
+                                cursorIndex === index
+                                  ? classes["cursor"]
+                                  : selectedEditArea ===
+                                      `${nest},${cellIndex}` &&
+                                    cursorIndex === -1 &&
+                                    index === 0
+                                  ? classes["cursor-1"]
+                                  : ""
+                              }
+                            >
+                              {value}
+                            </p>
+                          )
+                        ) : (
+                          <div>
+                            {renderComponent(
+                              value,
+                              `${nest},v,${cellIndex},${index}`
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  {/* ))} */}
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      );
+    }
   };
 
   // convert our format to latex format
@@ -1877,6 +2088,22 @@ export const MathEquationEditorOutput = () => {
             matrixLatexValue += ` \\\\ `;
           }
           matrixLatexValue += ` \\end{pmatrix}`;
+          // latex += `\\begin{pmatrix} 1 & 0 & 0 & 4 & 2_{s}^2 \\\\ 0 & 1 & 0 \\\\ 0 & 0 & 1  \\\\ \\end{pmatrix}`;
+          latex += matrixLatexValue;
+        } else if (item.name === "Vector Matrix") {
+          let matrixLatexValue = `\\begin{vmatrix}`;
+          for (let i = 0; i < item.row; i++) {
+            for (let j = 0; j < item.column; j++) {
+              if (j !== 0) {
+                matrixLatexValue += " & ";
+              }
+              matrixLatexValue += `${convertToLatex(
+                item.value[item.column * i + j]
+              )}`;
+            }
+            matrixLatexValue += ` \\\\ `;
+          }
+          matrixLatexValue += ` \\end{vmatrix}`;
           // latex += `\\begin{pmatrix} 1 & 0 & 0 & 4 & 2_{s}^2 \\\\ 0 & 1 & 0 \\\\ 0 & 0 & 1  \\\\ \\end{pmatrix}`;
           latex += matrixLatexValue;
         } else if (item.name === "Integral") {
@@ -2004,11 +2231,24 @@ export const MathEquationEditorOutput = () => {
     e.preventDefault();
     console.log(
       "inside matrixInputsSubmitHandler ",
+      clickedPanelButton,
       buttonInfos.mathConstructs[8],
       rowsCount,
       columnsCount
     );
-    panelButtonClicked(buttonInfos.mathConstructs[8], rowsCount, columnsCount);
+    if (clickedPanelButton === "Matrix") {
+      panelButtonClicked(
+        buttonInfos.mathConstructs[8],
+        rowsCount,
+        columnsCount
+      );
+    } else if (clickedPanelButton === "Vector Matrix") {
+      panelButtonClicked(
+        buttonInfos.mathConstructs[9],
+        rowsCount,
+        columnsCount
+      );
+    }
     setMatrixInputModal(false);
   };
 
@@ -2206,7 +2446,9 @@ export const MathEquationEditorOutput = () => {
 
                 // setHoverDetailsModal(false);
               }}
-              className={`panel-button-ref ${classes["panel-button"]}`}
+              className={`panel-button-ref ${classes["panel-button"]} ${
+                buttonInfo.image && classes["image-button"]
+              }`}
             >
               {console.log("  buttonInfo.image ", buttonInfo.image, buttonInfo)}
               {buttonInfo.image ? (
@@ -2316,6 +2558,7 @@ export const MathEquationEditorOutput = () => {
         <MatrixInputModal
           closeSearchModal={matrixInputModalCloseHandler}
           matrixSubmitHandler={matrixInputsSubmitHandler}
+          clickedPanelButton={clickedPanelButton}
         />
       )}
     </div>

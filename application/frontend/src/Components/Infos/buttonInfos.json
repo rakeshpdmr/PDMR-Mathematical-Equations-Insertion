@@ -77,6 +77,16 @@
       "column": 2,
       "latexFormat": "\\begin{pmatrix}  &  \\  &  \\ end{pmatrix}",
       "value": [],
+      "image": "pmatrixIcon",
+      "type": "complex"
+    },
+    {
+      "name": "Vector Matrix",
+      "label": "Vector Matrix",
+      "row": 2,
+      "column": 2,
+      "latexFormat": "\\begin{vmatrix}  &  \\  &  \\ end{vmatrix}",
+      "value": [],
       "image": "matrixIcon",
       "type": "complex"
     }

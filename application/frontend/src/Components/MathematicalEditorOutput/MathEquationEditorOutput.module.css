@@ -221,6 +221,10 @@
   cursor: pointer;
 }
 
+.image-button {
+  background-color: #d1d1d1;
+}
+
 .main-container {
   display: flex;
   flex-direction: column;
