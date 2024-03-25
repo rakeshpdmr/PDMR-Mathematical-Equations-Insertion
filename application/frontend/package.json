@@ -10,6 +10,8 @@
     "file-saver": "^2.0.5",
     "html-to-image": "^1.11.11",
     "katex": "^0.16.9",
+    "mathjax": "^3.2.2",
+    "mathlive": "^0.98.6",
     "mathquill": "^0.10.1-a",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

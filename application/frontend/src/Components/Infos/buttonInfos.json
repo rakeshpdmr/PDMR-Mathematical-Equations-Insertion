@@ -89,6 +89,22 @@
       "value": [],
       "image": "matrixIcon",
       "type": "complex"
+    },
+    {
+      "name": "Vector",
+      "label": "Vector",
+      "latexFormat": "\\vec{}",
+      "value": [],
+      "image": "vectorIcon",
+      "type": "complex"
+    },
+    {
+      "name": "Hat",
+      "label": "Hat",
+      "latexFormat": "\\hat{}",
+      "value": [],
+      "image": "hatIcon",
+      "type": "complex"
     }
   ],
   "greekAndHebrewLetters": [

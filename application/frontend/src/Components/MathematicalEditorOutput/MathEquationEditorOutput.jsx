@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect, Component } from "react";
+import { convertLatexToMathMl } from "mathlive";
+
 import { toPng } from "html-to-image";
 import { saveAs } from "file-saver";
 import classes from "./MathEquationEditorOutput.module.css";
@@ -16,10 +18,23 @@ import subscriptIcon from "../../Assets/buttonImages/subscript.png";
 import superscriptIcon from "../../Assets/buttonImages/superscript.png";
 import matrixIcon from "../../Assets/buttonImages/matrix.png";
 import pmatrixIcon from "../../Assets/buttonImages/pmatrix.png";
+import vectorIcon from "../../Assets/buttonImages/vector.png";
+import hatIcon from "../../Assets/buttonImages/hat.png";
+// import { mathjax } from "mathjax-full/js/mathjax";
+// import { TeX } from "mathjax-full/js/input/tex";
+// import { SVG } from "mathjax-full/js/output/svg";
+// import { liteAdaptor } from "mathjax-full/js/adaptors/liteAdaptor";
+// import { RegisterHTMLHandler } from "mathjax-full/js/handlers/html";
+// import { mathjax } from "mathjax-full/es5/mathjax";
+// import { TeX } from "mathjax-full/es5/input/tex";
+// import { SVG } from "mathjax-full/es5/output/svg";
+// import { liteAdaptor } from "mathjax-full/es5/adaptors/liteAdaptor";
+// import { RegisterHTMLHandler } from "mathjax-full/es5/handlers/html";
 
 import cloudDownloadIcon from "../../Assets/cloud-download.png";
 import katex from "katex";
 import buttonInfos from "../Infos/buttonInfos.json";
+import { SelectInput } from "../UI/Input/InputItem";
 
 export const MathEquationEditorOutput = () => {
   // modal
@@ -40,6 +55,8 @@ export const MathEquationEditorOutput = () => {
     superscriptIcon,
     matrixIcon,
     pmatrixIcon,
+    vectorIcon,
+    hatIcon,
   };
 
   const tabs = [
@@ -92,11 +109,23 @@ export const MathEquationEditorOutput = () => {
   const [lengthOfSelectedArea, setLengthOfSelectedArea] = useState(0);
   const [cursorIndex, setCursorIndex] = useState(0);
 
+  // final equation
+  const [htmlLang, setHtmlLang] = useState("");
+  const [mathmlLang, setMathmlLang] = useState("");
+  const [displayMode, setDisplayMode] = useState(false);
+  const [outputType, setOutputType] = useState("math");
+  const [xmlMode, setXmlMode] = useState(false);
+
   //undo
   const [history, setHistory] = useState([]);
   const [redoHistory, setRedoHistory] = useState([]);
 
   // console Use Effects
+
+  useEffect(() => {
+    console.log(" changed displayMode ", displayMode);
+    console.log(" changed outputType ", outputType);
+  }, [displayMode, outputType]);
   useEffect(() => {
     console.log(" cursor lengthOfSelectedArea ", lengthOfSelectedArea);
     console.log(" cursor cursor index ", cursorIndex);
@@ -275,9 +304,86 @@ export const MathEquationEditorOutput = () => {
   useEffect(() => {
     const result = convertToLatex(equation);
     console.log("equation uf after converted", result);
+    // rendering mathml format in output div
+    const renderEquation = (convertedLatex) => {
+      try {
+        console.log("mathlive converter", convertLatexToMathMl(convertedLatex));
+        if (outputType === "math") {
+          const mathOutputDiv = document.getElementById("math-output");
+          // Clear contents of math-output div
+          mathOutputDiv.innerHTML = "";
+          // Render the equation
+          katex.render(convertedLatex, mathOutputDiv, {
+            output: "mathml",
+            throwOnError: false,
+            // maxExpand: 1000,
+            // maxSize: 500,
+            // minRuleThickness: 0.04,
+            displayMode: displayMode,
+          });
+          // katex.render(convertedLatex, mathOutputDiv, {
+          //   displayMode: true,
+          //   leqno: false,
+          //   fleqn: false,
+          //   throwOnError: true,
+          //   errorColor: "#cc0000",
+          //   strict: "warn",
+          //   output: "htmlAndMathml",
+          //   trust: false,
+          //   macros: { "\\f": "#1f(#2)" },
+          // });
+        } else if (outputType === "html") {
+          const htmlString = katex.renderToString(convertedLatex, {
+            output: "html",
+            throwOnError: false,
+            displayMode: displayMode,
+          });
+          setHtmlLang(htmlString);
+        } else if (outputType === "mathml") {
+          const mathmlString = katex.renderToString(
+            convertedLatex,
+            // {
+            //   displayMode: true,
+            //   leqno: false,
+            //   fleqn: false,
+            //   throwOnError: true,
+            //   errorColor: "#cc0000",
+            //   strict: "warn",
+            //   output: "htmlAndMathml",
+            //   trust: false,
+            //   macros: { "\\f": "#1f(#2)" },
+            // }
+
+            {
+              // output: "htmlAndMathml",
+              output: "mathml",
+              throwOnError: false,
+              displayMode: displayMode,
+            }
+          );
+          setMathmlLang(mathmlString);
+        }
+        // const html = katex.renderToString(convertedLatex, {
+        //   output: "mathml", // "html"
+        //   throwOnError: false,
+        //   displayMode: displayMode,
+        // });
+
+        // console.log("rendered html ", htmlString);
+        // console.log("rendered mathml ", mathmlString);
+
+        console.log(
+          "inside render equation function ",
+          displayMode,
+          outputType
+        );
+      } catch (error) {
+        console.error("Error rendering LaTeX:", error);
+      }
+    };
 
     renderEquation(result);
-  }, [equation]);
+  }, [equation, outputType, displayMode]);
 
   // functions
 
@@ -2018,6 +2124,161 @@ export const MathEquationEditorOutput = () => {
         </div>
       );
     }
+
+    if (buttonInfo.name === "Vector") {
+      let editAreaIndex;
+      let cursorPointerIndex;
+      if (typeof nest === "object") {
+        editAreaIndex = "0";
+        cursorPointerIndex = nest[0];
+      } else {
+        cursorPointerIndex = Number(
+          nest.split(",")[nest.split(",").length - 1]
+        );
+        let lastIndex = nest.lastIndexOf(",");
+        editAreaIndex = nest.substring(0, lastIndex);
+        console.log(" last index ", nest, cursorPointerIndex, editAreaIndex);
+        // editAreaIndex = 0;
+      }
+      return (
+        <div
+          className={` ${classes["vector-container"]}  ${
+            selectedEditArea === editAreaIndex &&
+            cursorIndex === cursorPointerIndex
+              ? classes["cursor"]
+              : selectedEditArea === editAreaIndex &&
+                cursorIndex === -1 &&
+                cursorPointerIndex === 0
+              ? classes["cursor-1"]
+              : ""
+          } `}
+        >
+          <div
+            style={{ fontSize: "2rem" }}
+            className={classes["top-container"]}
+          >
+            →
+          </div>
+          <div
+            className={`${
+              buttonInfo?.value?.length > 0
+                ? classes["edit-area"]
+                : classes["edit-area-empty"]
+            }  ${
+              selectedEditArea === `${nest},v` && classes["selected-edit-area"]
+            } `}
+            id={`${nest},v`}
+            ref={editAreaRef}
+            onClick={(e) => selectedEditAreaHandler(e, `${nest},v`)}
+          >
+            {buttonInfo?.value.map((value, index) => (
+              <div>
+                {typeof value === "string" ? (
+                  value === " " ? (
+                    <span>&nbsp;</span>
+                  ) : (
+                    <p
+                      className={
+                        selectedEditArea === `${nest},v` &&
+                        cursorIndex === index
+                          ? classes["cursor"]
+                          : selectedEditArea === `${nest},v` &&
+                            cursorIndex === -1 &&
+                            index === 0
+                          ? classes["cursor-1"]
+                          : ""
+                      }
+                    >
+                      {value}
+                    </p>
+                  )
+                ) : (
+                  <div>{renderComponent(value, `${nest},v,${index}`)}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (buttonInfo.name === "Hat") {
+      let editAreaIndex;
+      let cursorPointerIndex;
+      if (typeof nest === "object") {
+        editAreaIndex = "0";
+        cursorPointerIndex = nest[0];
+      } else {
+        cursorPointerIndex = Number(
+          nest.split(",")[nest.split(",").length - 1]
+        );
+        let lastIndex = nest.lastIndexOf(",");
+        editAreaIndex = nest.substring(0, lastIndex);
+        console.log(" last index ", nest, cursorPointerIndex, editAreaIndex);
+        // editAreaIndex = 0;
+      }
+      return (
+        <div
+          className={` ${classes["vector-container"]}  ${
+            selectedEditArea === editAreaIndex &&
+            cursorIndex === cursorPointerIndex
+              ? classes["cursor"]
+              : selectedEditArea === editAreaIndex &&
+                cursorIndex === -1 &&
+                cursorPointerIndex === 0
+              ? classes["cursor-1"]
+              : ""
+          } `}
+        >
+          {/* <span style={{ fontSize: "3rem" }}>&int;</span>{" "} */}
+          <div
+            style={{ fontSize: "2rem" }}
+            className={classes["top-container"]}
+          >
+            ^
+          </div>
+          <div
+            className={`${
+              buttonInfo?.value?.length > 0
+                ? classes["edit-area"]
+                : classes["edit-area-empty"]
+            }  ${
+              selectedEditArea === `${nest},v` && classes["selected-edit-area"]
+            } `}
+            id={`${nest},v`}
+            ref={editAreaRef}
+            onClick={(e) => selectedEditAreaHandler(e, `${nest},v`)}
+          >
+            {buttonInfo?.value.map((value, index) => (
+              <div>
+                {typeof value === "string" ? (
+                  value === " " ? (
+                    <span>&nbsp;</span>
+                  ) : (
+                    <p
+                      className={
+                        selectedEditArea === `${nest},v` &&
+                        cursorIndex === index
+                          ? classes["cursor"]
+                          : selectedEditArea === `${nest},v` &&
+                            cursorIndex === -1 &&
+                            index === 0
+                          ? classes["cursor-1"]
+                          : ""
+                      }
+                    >
+                      {value}
+                    </p>
+                  )
+                ) : (
+                  <div>{renderComponent(value, `${nest},v,${index}`)}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
   };
 
   // convert our format to latex format
@@ -2072,6 +2333,10 @@ export const MathEquationEditorOutput = () => {
           latex += `^{${convertToLatex(item.value)}}`;
         } else if (item.name === "Subscript") {
           latex += `_{${convertToLatex(item.value)}}`;
+        } else if (item.name === "Vector") {
+          latex += `\\vec{${convertToLatex(item.value)}}`;
+        } else if (item.name === "Hat") {
+          latex += `\\hat{${convertToLatex(item.value)}}`;
         } else if (item.name === "Integral") {
           latex += `\\int{${convertToLatex(item.value)}}`;
         } else if (item.name === "Matrix") {
@@ -2092,6 +2357,7 @@ export const MathEquationEditorOutput = () => {
           latex += matrixLatexValue;
         } else if (item.name === "Vector Matrix") {
           let matrixLatexValue = `\\begin{vmatrix}`;
+
           for (let i = 0; i < item.row; i++) {
             for (let j = 0; j < item.column; j++) {
               if (j !== 0) {
@@ -2117,32 +2383,6 @@ export const MathEquationEditorOutput = () => {
     });
 
     return latex;
-  };
-
-  // rendering mathml format in output div
-  const renderEquation = (convertedLatex) => {
-    try {
-      const mathOutputDiv = document.getElementById("math-output");
-      const html = katex.renderToString(convertedLatex, {
-        output: "mathml", // "html"
-        throwOnError: false,
-        // displayMode: true,
-      });
-      console.log("rendered html ", html);
-      // Clear contents of math-output div
-      mathOutputDiv.innerHTML = "";
-      // Render the equation
-      katex.render(convertedLatex, mathOutputDiv, {
-        output: "mathml",
-        throwOnError: false,
-        // maxExpand: 1000,
-        // maxSize: 500,
-        // minRuleThickness: 0.04,
-        // displayMode: true,
-      });
-    } catch (error) {
-      console.error("Error rendering LaTeX:", error);
-    }
   };
 
   // const downloadInWmfFile = async () => {
@@ -2514,19 +2754,67 @@ export const MathEquationEditorOutput = () => {
         </div>
 
         <div className={classes["latex-output"]}>
-          <h3>Latex Format Output</h3>
+          <h4>Latex Format Output</h4>
           <div className={classes["latex-equation"]}>
             {convertToLatex(equation)}
           </div>
         </div>
 
         <div className={classes["final-output"]}>
-          <h3>Final Equation</h3>
-          <div
+          <div className={classes["final-output-header"]}>
+            <h4>Final Equation </h4>
+            <div className={classes["final-output-inputs"]}>
+              <div>
+                <input
+                  type="checkbox"
+                  // checked={displayMode}
+                  onChange={() => setDisplayMode((prev) => !prev)}
+                ></input>
+                <label>Display Mode</label>
+              </div>
+              <div className={classes["us-form"]}>
+                <select
+                  name="Output Type"
+                  id="output-type"
+                  onChange={(e) => {
+                    console.log(" select input  clicked ", e.target.value);
+                    setOutputType(e.target.value);
+                  }}
+                >
+                  <option value="math">Math</option>
+                  <option value="mathml">MathML</option>
+                  <option value="html">Html</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          {outputType === "math" ? (
+            <div
+              id="math-output"
+              // ref={equationRef}
+              className={classes["final-equation"]}
+            ></div>
+          ) : //   math
+          // </div>
+          outputType === "html" ? (
+            <div
+              className={` ${classes["final-equation"]} ${classes["final-equation-html"]}  `}
+            >
+              {htmlLang}
+            </div>
+          ) : (
+            <div
+              className={` ${classes["final-equation"]} ${classes["final-equation-mathml"]}  `}
+            >
+              {mathmlLang}
+            </div>
+          )}
+
+          {/* <div
             id="math-output"
             // ref={equationRef}
             className={classes["final-equation"]}
-          ></div>
+          ></div> */}
         </div>
       </div>
       <div className={classes["footer-container"]}>
